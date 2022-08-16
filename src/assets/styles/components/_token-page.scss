@@ -1,0 +1,80 @@
+.token-page-cover{
+  position: relative;
+}
+
+.token-page{
+  display: grid;
+  grid-template-columns: 200px auto;
+  gap: 30px;
+  //margin-top: 20px;
+
+  &__media{
+
+  }
+
+  &__img{
+    height: 200px;
+
+    & > div{
+      height: 100%;
+    }
+
+    .toggle{
+      height: auto;
+      margin-top: 20px
+    }
+  }
+
+  &__data{
+    max-width: 500px;
+  }
+
+  &__field{
+    display: grid;
+    grid-template-columns: 100px auto;
+    margin-top: 20px;
+
+    & > div{
+      align-self: center;
+    }
+  }
+
+  &__inside{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+
+    & > div{
+      position: relative;
+      height: 60px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #fff;
+
+      span{
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        cursor: pointer;
+        display: none;
+
+        svg{
+          width: 15px;
+          height: 15px;
+
+          path{
+            stroke: #333333;
+          }
+        }
+      }
+
+      &:hover span{
+        display: block;
+      }
+    }
+  }
+
+  &__actions{
+    padding-top: 20px;
+  }
+}

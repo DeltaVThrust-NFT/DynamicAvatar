@@ -1,0 +1,22 @@
+input.input,
+div.input input,
+select.input{
+  display: block;
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  padding: 10px;
+  color: var(--main-color);
+
+  &::placeholder{
+    color: var(--main-color);
+    opacity: .5;
+  }
+}
+
+div.input.default input,
+input.input.default,
+select.input.default{
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius);
+}

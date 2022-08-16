@@ -1,0 +1,42 @@
+.header{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  & > div:first-of-type{
+    align-self: center;
+  }
+
+  &__return{
+    position: relative;
+    padding: 5px;
+    display: inline-grid;
+    grid-template-columns: 15px auto;
+    gap: 5px;
+    cursor: pointer;
+    align-self: center;
+
+    span:first-of-type{
+      justify-self: center;
+      align-self: center;
+    }
+
+    svg{
+      width: 100%;
+
+      path{
+        fill: var(--icon-color)
+      }
+    }
+  }
+
+  &__right{
+    display: grid;
+    grid-template-columns: 300px auto;
+    gap: 20px;
+
+    & > div{
+      align-self: center;
+    }
+  }
+}

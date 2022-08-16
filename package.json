@@ -1,0 +1,36 @@
+{
+  "name": "donft_template",
+  "version": "0.1.0",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@ledgerhq/hw-app-eth": "^6.29.0",
+    "@ledgerhq/hw-transport-webhid": "^6.27.1",
+    "@rarible/connector": "^0.9.11-beta.2",
+    "@rarible/connector-helper": "^0.9.11-beta.2",
+    "@rarible/connector-walletconnect": "^0.9.11-beta.2",
+    "axios": "^0.27.2",
+    "copy-to-clipboard": "^3.3.1",
+    "core-js": "^3.6.5",
+    "ethers": "^5.6.9",
+    "pinia": "^2.0.14",
+    "qrcode.vue": "^3.3.3",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.15",
+    "@vue/cli-plugin-router": "~4.5.15",
+    "@vue/cli-service": "~4.5.15",
+    "@vue/compiler-sfc": "^3.0.0",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

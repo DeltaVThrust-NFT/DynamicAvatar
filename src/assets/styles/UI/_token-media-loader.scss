@@ -1,0 +1,62 @@
+.token-media-loader{
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+
+  &__img{
+    height: 100%;
+  }
+
+  &__selfie{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    background: rgba(0,0,0,0.2);
+  }
+
+  &__input{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    visibility: hidden;
+    text-align: center;
+
+    &:hover {
+      background: rgba(0,0,0,0.4);
+    }
+
+    &.active{
+      visibility: visible;
+    }
+
+
+    svg{
+      width: 50px;
+
+      path{
+        fill: var(--main-color)
+      }
+    }
+
+    svg + div{
+      font-size: 12px;
+      padding-top: 10px;
+    }
+  }
+
+  &:hover &__input{
+    visibility: visible !important;
+  }
+
+}

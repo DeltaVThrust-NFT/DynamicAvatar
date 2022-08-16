@@ -1,0 +1,95 @@
+.admin-contract{
+  position: relative;
+
+  & + &{
+    margin-top: 20px
+  }
+
+  &__name{
+    color: var(--main-color);
+    font-weight: 600;
+    font-size: 20px;
+    cursor: pointer;
+    padding-right: 40px;
+    padding-bottom: 10px;
+  }
+
+  &__toggle{
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    transition: .2s;
+
+    svg{
+      width: 24px;
+
+      path{
+        fill: var(--main-color)
+      }
+    }
+  }
+
+  &__address{
+    text-align: left;
+
+    a{
+      color: var(--link-color);
+      font-size: 16px;
+      word-break: break-all;
+      display: inline;
+    }
+  }
+
+  &__props{
+    display: none;
+    grid-template-columns: 140px auto;
+    padding: 20px 0;
+    gap: 10px;
+    word-break: break-all;
+
+    @media screen and (max-width: $mobile-width) {
+      grid-template-columns: 110px auto;
+    }
+
+    & > div{
+      color: var(--sub-color);
+      font-size: 16px;
+
+      &:nth-child(odd){
+        color: var(--link-color)
+      }
+
+      @media screen and (max-width: $mobile-width) {
+        &:nth-child(even){
+          padding-left: 20px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+
+  &.active &__props{
+    display: grid;
+
+    @media screen and (max-width: $mobile-width) {
+      display: block;
+    }
+  }
+
+  &.active &__toggle{
+    transform: rotate(180deg);
+  }
+
+  &__actions{
+    display: none;
+  }
+
+  &__actions{
+    display: none;
+  }
+
+  &.active &__actions{
+    display: block;
+  }
+}

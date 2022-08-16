@@ -1,0 +1,31 @@
+.identity{
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto 30px;
+
+  &__wallet{
+    color: var(--link-color);
+
+    & > div:first-of-type{
+      font-size: 16px;
+    }
+
+    & > div:last-of-type{
+      font-size: 12px;
+    }
+  }
+
+  &__logout{
+    align-self: center;
+    text-align: center;
+
+    svg{
+      cursor: pointer;
+      width: 20px;
+      path{
+        fill: var(--link-color)
+      }
+    }
+  }
+}

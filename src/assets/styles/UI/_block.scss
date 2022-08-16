@@ -1,0 +1,12 @@
+.block{
+  &_d2{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &_auto-col{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px
+  }
+}
