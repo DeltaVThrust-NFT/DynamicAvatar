@@ -20,9 +20,18 @@
     cursor: default;
   }
 
+  &.no_priory{
+    background: var(--btn-bg);
+    opacity: .5;
+  }
+
   &.red{
     color: var(--red-btn-color);
     background: var(--red-btn-border);
     border-color: var(--red-btn-border);
+  }
+
+  &_inline{
+    display: inline-block;
   }
 }

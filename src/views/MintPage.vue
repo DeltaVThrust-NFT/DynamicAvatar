@@ -45,6 +45,9 @@
         >
           Create NFT
         </span>
+        <span @click="test">
+          test
+        </span>
       </div>
     </div>
     <PageBlockActionLoading v-if="isLoading"/>
@@ -67,6 +70,14 @@
     const router = useRouter()
     import TrnView from "@/utils/TrnView";
     import {ConnectionStore, getErrorTextByCode, Networks} from "@/crypto/helpers";
+    import {Traits} from "@/crypto/helpers/Token";
+
+    import {IPFS} from "@/crypto/helpers"
+
+    const test = async () => {
+        const ipfs = await IPFS.getIPFS()
+        console.log(ipfs);
+    }
 
     const store = useStore()
     const {
@@ -88,6 +99,16 @@
         name: '',
         link: '',
         description: '',
+        attributes: [
+            {
+                trait_type: 'age',
+                value: Traits.age.baby
+            },
+            {
+                trait_type: 'mood',
+                value: Traits.mood.general
+            }
+        ]
     })
     const contractAddress = ref('')
     const contractOptions = ref([])

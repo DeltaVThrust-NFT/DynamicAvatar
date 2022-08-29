@@ -1,16 +1,22 @@
-import AppAPI, {HTTP} from "@/utils/API";
+import AppAPI, {HTTP, StorageAPI} from "@/utils/API";
 import {ErrorList} from '@/crypto/helpers'
 
 export default {
-    async save(file){
+    async save(file, id = null){
+        if(!(file instanceof File)){
+            file = new Blob([JSON.stringify(file)], {type: 'application/json'});
+        }
+
         const formData = new FormData();
-        formData.append('payload', file);
-        const result = await AppAPI.post('/ipfs/upload', formData, {
+        formData.append('file', file)
+        formData.append('file_type', file.type)
+        if(id) formData.append('file_id', id)
+        const result = await StorageAPI.post('', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         })
-        return result.data.split('://')[1]
+        return `${process.env.VUE_APP_STORAGE_ENDPOINT}/${result.data}`
     },
 
     /*
@@ -36,8 +42,17 @@ export default {
     * */
     async loadFile(file){
         try{
-            const cid = await this.save(file)
-            return `https://ipfs.io/ipfs/${cid}`;
+            return await this.save(file)
+        }
+        catch (e){
+            console.log('Error while loadingJSON to back', e)
+            throw Error(ErrorList.LOAD_MEDIA_ERROR)
+        }
+    },
+
+    async changeFile(file, id){
+        try{
+            return await this.save(file, id)
         }
         catch (e){
             console.log('Error while loadingJSON to back', e)

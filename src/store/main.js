@@ -4,6 +4,7 @@ import {catToFixed, stringCompare} from "@/utils/string";
 import ModalController from "@/components/helpers/ModalController";
 import {Networks} from "@/crypto/helpers";
 import {log} from "@/utils/AppLogger";
+import {Traits} from "@/crypto/helpers/Token";
 
 export const useStore = defineStore('main', {
     state: () => ({
@@ -57,6 +58,96 @@ export const useStore = defineStore('main', {
         },
 
         buyTokens: {
+            [CollectionType.BUNDLE]: [
+                /*{
+                    "image":"https://ipfs.io/ipfs/bafybeicakwvqjaaodbeemresxcctnexfqgwj5ygty2qcn6ewg3iu4z7nj4/file",
+                    "name":"Blue Fish",
+                    "link":"https://pixabay.com/ru/",
+                    "description":"This is blue fish",
+                    "attributes": [
+                        {
+                            trait_type: 'age',
+                            value: Traits.age.baby
+                        },
+                        {
+                            trait_type: 'mood',
+                            value: Traits.mood.general
+                        }
+                    ],
+                    id: '123432',
+                    contractAddress: 'gdfjhgjhkljgkfj',
+                    identity: `123432:gdfjhgjhkljgkfj`,
+                    fieldsForView: [
+                        {key: 'name', value: 'Blue Fish'}
+                    ],
+                    inner: [],
+                    innerLoading: false
+                },*/
+                {
+                    isForBuy: true,
+                    image: '/img/characters/baby-general.png',
+                    name: 'Baby',
+                    description: 'Baby general',
+                    link: null,
+                    attributes: [
+                        {
+                            trait_type: 'age',
+                            value: Traits.age.baby
+                        },
+                        {
+                            trait_type: 'mood',
+                            value: Traits.mood.general
+                        }
+                    ],
+                },
+                {
+                    isForBuy: true,
+                    image: '/img/characters/child-general.png',
+                    name: 'Child',
+                    description: 'Child general',
+                    link: null,
+                    attributes: [
+                        {
+                            trait_type: 'age',
+                            value: Traits.age.child
+                        },
+                        {
+                            trait_type: 'mood',
+                            value: Traits.mood.general
+                        }
+                    ],
+                },
+                {
+                    isForBuy: true,
+                    image: '/img/characters/teen-general.png',
+                    name: 'Teen',
+                    description: 'Teen general',
+                    link: null,
+                    attributes: [
+                        {
+                            trait_type: 'age',
+                            value: Traits.age.teen
+                        },
+                        {
+                            trait_type: 'mood',
+                            value: Traits.mood.general
+                        }
+                    ],
+                },
+
+                /*{
+                    isForBuy: true,
+                    image: '/img/test-tokens/mountains_2.jpeg',
+                    name: 'Mountains 2',
+                    cid: 'bafybeie4cexpij2k6px4cprqektt6alkdvv2p7w4ujdnocmxs67dv75rpe/file'
+                },
+                {
+                    isForBuy: true,
+                    image: '/img/test-tokens/mountains_3.jpeg',
+                    name: 'Mountains 3',
+                    cid: 'bafybeigdiwy2iay2nnmxemzdfnvbbedmiwzg5pppnl2jcptbv4c3c4yxbe/file'
+                }*/
+            ],
             [CollectionType.EFFECT]: [
                 {
                     isForBuy: true,

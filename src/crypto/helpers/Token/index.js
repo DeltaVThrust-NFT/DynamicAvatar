@@ -8,6 +8,38 @@ export const Roles = {
     nonRemoved: [1, 2]
 }
 
+export const Traits = {
+    age: {
+        baby: 0,
+        child: 1,
+        teen: 2,
+        adult: 3,
+        senior: 4
+    },
+    mood: {
+        angry: 1,
+        sad: 2,
+        general: 3,
+        happy: 4
+    },
+    getAgeNameById(inputId) {
+        return Object.entries(this.age).find(([, id]) => id === inputId)?.[0]
+    },
+    getMoodNameById(inputId) {
+        return Object.entries(this.mood).find(([, id]) => id === inputId)?.[0]
+    }
+}
+
+export async function getTokenImageFileByName(inputName) {
+    const imageName = inputName.split('/').pop()
+    const imageBytes = await fetch(`/img/characters/${imageName}`).then(r => r.blob())
+
+    return new File([imageBytes], imageName, {
+        lastModified: new Date(),
+        type: imageBytes.type
+    })
+}
+
 export async function applyAssets(serverURL, original, modifier){
     const sendBody = {
         original: {

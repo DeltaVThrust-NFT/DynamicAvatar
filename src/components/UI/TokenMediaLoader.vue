@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <ToggleElement v-model="isTransportSelfie">
+  <ToggleElement v-if="isSelfieAvailable" v-model="isTransportSelfie">
     {{ isTransportSelfie? 'Make selfie' : 'Load file'}}
   </ToggleElement>
 </template>
@@ -43,6 +43,8 @@
     import TakePhoto from '@/components/UI/TakePhoto'
 
     const isTransportSelfie = ref(false)
+
+    const isSelfieAvailable = +process.env.VUE_APP_IS_SELFIE_AVAILABLE
 
     const isLoading = ref(false)
     const image = ref(null)

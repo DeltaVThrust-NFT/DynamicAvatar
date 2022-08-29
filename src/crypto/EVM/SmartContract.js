@@ -90,6 +90,8 @@ class SmartContract {
             arrayOfTokens = await Promise.all(arrayOfTokens.map(id => Contract.tokenURI(id)))
             log('[SmartContract] token URI`s', arrayOfTokens);
 
+            const arrayOfTokensURI = arrayOfTokens;
+
             arrayOfTokens = await Promise.all(arrayOfTokens.map(uri => DecentralizedStorage.readData(uri)))
             log('[SmartContract] plain tokens meta data', arrayOfTokens);
 
@@ -99,6 +101,7 @@ class SmartContract {
                     id: arrayOfTokensIds[index],
                     contractAddress: this._address,
                     address: arrayOfTokensIds[index],
+                    uri: arrayOfTokensURI[index],
                     ...tokenObject
                 })
             })
@@ -123,6 +126,7 @@ class SmartContract {
         return Formatters.tokenFormat({
             id: tokenID,
             contractAddress: this._address,
+            uri: tokenURI,
             ...tokenObject
         })
     }

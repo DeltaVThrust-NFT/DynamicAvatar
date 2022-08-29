@@ -13,6 +13,7 @@ import {stringCompare} from "@/utils/string";
 import alert from "@/utils/alert";
 import {ethers} from "ethers";
 import {log} from "@/utils/AppLogger";
+import {getTokenImageFileByName} from "@/crypto/helpers/Token";
 
 class EVM {
 
@@ -43,16 +44,49 @@ class EVM {
 
         const {
             bundleContract,
-            effectsContract,
-            testContract
+            // effectsContract,
+            // testContract
         } = Networks.getSettings(ConnectionStore.getNetwork().name)
 
-        const contractsList = [bundleContract, effectsContract, testContract]
+        // const contractsList = [bundleContract, effectsContract, testContract]
+        const contractsList = [bundleContract]
 
         const collections = await Promise.all(contractsList.map(contractAddress => this.getContractWithTokens(contractAddress)))
 
         storage.changeCollectionLoadingState(false)
         storage.setCollections(collections)
+    }
+
+    async saveNewAttributes(token, {age, mood}){
+        const newImageName = `${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
+        const imageFile = await Token.getTokenImageFileByName(newImageName)
+
+        const prevTokenImgId = token.image.split('/').pop()
+        await DecentralizedStorage.changeFile(imageFile, prevTokenImgId)
+
+
+        const newMetaData = {
+            name: token.name,
+            image: token.image,
+            description: token.description,
+            link: token.link,
+            attributes: [
+                {
+                    trait_type: 'age',
+                    value: +age
+                },
+                {
+                    trait_type: 'mood',
+                    value: +mood
+                }
+            ]
+        }
+
+        const URI_id = token.uri.split('/').pop()
+
+        await DecentralizedStorage.changeFile(newMetaData, URI_id)
+
+        return true
     }
 
     async getContractWithTokens(address){
@@ -178,11 +212,24 @@ class EVM {
 
 
 
-    async mintTestToken({cid, contractAddress}){
+    async mintTestToken({contractAddress, ...meta}){
+        const imageFile = await Token.getTokenImageFileByName(meta.image)
+        const imageURL = await DecentralizedStorage.loadFile(imageFile)
+
+        const saveMeta = {
+            name: meta.name,
+            image: imageURL,
+            link: meta.link,
+            description: meta.description,
+            attributes: meta.attributes
+        }
+
+        const metaURL = await DecentralizedStorage.loadJSON(saveMeta)
+
         const contract = new SmartContract({
             address: contractAddress
         })
-        return await contract.mint(ConnectionStore.getUserIdentity(), cid)
+        return await contract.mint(ConnectionStore.getUserIdentity(), metaURL)
     }
 
     async createBundle(meta, image, tokens){
