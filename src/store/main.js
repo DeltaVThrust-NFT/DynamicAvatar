@@ -217,6 +217,22 @@ export const useStore = defineStore('main', {
         }
     },
     actions: {
+        updateTokenImageAndAttributes(token, newAttributed){
+            // console.log(token);
+            const collection = this.collections.find(contract => stringCompare(contract.address, token.contractAddress))
+            const tokenInCollection = collection.tokens.find(t => stringCompare(t.id, token.id))
+
+            // console.log(this.preview.token);
+
+            const currentImage = new URL(this.preview.token.image)
+            currentImage.hash = `#${Date.now()}`
+
+            this.preview.token.image = currentImage.toString()
+            this.preview.token.attributes = newAttributed
+
+            tokenInCollection.image = currentImage.toString()
+            tokenInCollection.attributes = newAttributed
+        },
         toggleTokenForBundle(token){
             if(this.selectedForBundle.identities.includes(token.identity)) this.selectedForBundle.identities = this.selectedForBundle.identities.filter(t => !stringCompare(t, token.identity))
             else this.selectedForBundle.identities.push(token.identity)

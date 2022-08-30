@@ -45,9 +45,6 @@
         >
           Create NFT
         </span>
-        <span @click="test">
-          test
-        </span>
       </div>
     </div>
     <PageBlockActionLoading v-if="isLoading"/>
@@ -71,13 +68,6 @@
     import TrnView from "@/utils/TrnView";
     import {ConnectionStore, getErrorTextByCode, Networks} from "@/crypto/helpers";
     import {Traits} from "@/crypto/helpers/Token";
-
-    import {IPFS} from "@/crypto/helpers"
-
-    const test = async () => {
-        const ipfs = await IPFS.getIPFS()
-        console.log(ipfs);
-    }
 
     const store = useStore()
     const {

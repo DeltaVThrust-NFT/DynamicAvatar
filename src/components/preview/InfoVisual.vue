@@ -67,6 +67,9 @@
         isLoading.value = true
         try{
             await AppConnector.connector.saveNewAttributes(props.token, {age: tokenAge.value, mood: tokenMood.value})
+            await nextTick(() => {
+                haveAttributesChanges.value = false
+            })
         }
         catch (e) {
             alert.open(getErrorTextByCode(e.message) || e.message, 'Error:')

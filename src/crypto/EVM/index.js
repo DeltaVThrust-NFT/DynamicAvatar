@@ -86,6 +86,9 @@ class EVM {
 
         await DecentralizedStorage.changeFile(newMetaData, URI_id)
 
+        const storage = AppStorage.getStore()
+        storage.updateTokenImageAndAttributes(token, newMetaData.attributes)
+
         return true
     }
 
