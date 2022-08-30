@@ -58,6 +58,7 @@
     const store = useStore()
 
     const tokensView = computed(() => {
-        return (props.contract.tokens.length || !props.byAvailable)? props.contract.tokens : store.getShopTokens(props.contract.type, props.contract.address)
+        // return (props.contract.tokens.length || !props.byAvailable)? props.contract.tokens : store.getShopTokens(props.contract.type, props.contract.address)
+        return [...props.contract.tokens, ...store.getShopTokens(props.contract.type, props.contract.address)]
     })
 </script>

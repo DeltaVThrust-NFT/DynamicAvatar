@@ -193,7 +193,7 @@ class SmartContract {
         setProcessStatus(ActionTypes.minting_bundle)
 
         try{
-            const transactionResult = await Contract.bundleWithTokenURI(tokensForBundle, `ipfs://${bundleDataCID}`)
+            const transactionResult = await Contract.bundleWithTokenURI(tokensForBundle, bundleDataCID)
             return await transactionResult.wait()
         }
         catch (e){

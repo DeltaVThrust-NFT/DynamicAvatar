@@ -13,7 +13,7 @@ import {stringCompare} from "@/utils/string";
 import alert from "@/utils/alert";
 import {ethers} from "ethers";
 import {log} from "@/utils/AppLogger";
-import {getTokenImageFileByName} from "@/crypto/helpers/Token";
+import {getTokenImageFileByName, Traits} from "@/crypto/helpers/Token";
 
 class EVM {
 
@@ -61,7 +61,7 @@ class EVM {
         const newImageName = `${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
         const imageFile = await Token.getTokenImageFileByName(newImageName)
 
-        const prevTokenImgId = token.image.split('/').pop()
+        const prevTokenImgId = token.image.split('#').shift().split('/').pop()
         await DecentralizedStorage.changeFile(imageFile, prevTokenImgId)
 
 
@@ -238,7 +238,18 @@ class EVM {
     async createBundle(meta, image, tokens){
         const storage = AppStorage.getStore()
 
+        meta.attributes = [
+            {
+                trait_type: 'age',
+                value: Traits.age.baby
+            },
+            {
+                trait_type: 'mood',
+                value: Traits.mood.general
+            }
+        ]
         storage.setProcessStatus(ActionTypes.uploading_meta_data)
+
         const {
             metaCID
         } = await this.createTokenMeta(meta, image)

@@ -72,12 +72,12 @@
         Mint new NFT
       </router-link>
 
-      <!--<ToggleElement
+      <ToggleElement
         v-if="route.name === 'Gallery'"
         v-model="isBundleMode"
       >
         Choose NFT for bundle
-      </ToggleElement>-->
+      </ToggleElement>
       <div></div>
       <div></div>
     </div>

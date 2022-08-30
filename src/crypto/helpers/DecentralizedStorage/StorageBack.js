@@ -5,6 +5,14 @@ export default {
     async save(file, id = null){
         if(!(file instanceof File)){
             file = new Blob([JSON.stringify(file)], {type: 'application/json'});
+
+            // const file_1 = new File([file], 'metadata.json', {
+            //     lastModified: new Date(),
+            //     type: 'application/json'
+            // })
+            //
+            // console.log(URL.createObjectURL(file))
+            // console.log(URL.createObjectURL(file_1))
         }
 
         const formData = new FormData();
@@ -26,8 +34,8 @@ export default {
     * */
     async loadJSON(data = {}){
         try{
-            let file = new Blob([JSON.stringify(data)], {type: 'application/json'});
-            return await this.save(file)
+            // let file = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            return await this.save(data)
         }
         catch (e){
             console.log('Error while loadingJSON to back', e)
