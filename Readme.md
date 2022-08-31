@@ -1,25 +1,34 @@
-# app
+# DoNFT-EthCC Hackathon Project
 
-## Project setup
-```
-npm install
-```
+## Try it here https://ethcc.donft.io/
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Сharacter generator which based on DoNFT protocol.
+- mint NFT-parts of characters
+- bundle NFT-parts to create NFT-character
+- delegate access for changing character to other account
+- unbudle NFT-character to get NFT-parts back
 
-### Compiles and minifies for production
-```
-npm run build
 
-## docker
 
-### build
+## Presentation for EthCC
 
-    docker build --rm --no-cache -t donft_frontend:latest .
+https://www.canva.com/design/DAFHUcdu0N0/AIRg3hbiTmsIPZGbYcRzuA/view?utm_content=DAFHUcdu0N0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
-### run
+## Demo
 
-    docker run --rm  -p 8080:80  --name donft_frontend donft_frontend:latest
+https://youtu.be/q_wF-unWKas
+
+## DoNFT Protocol Description
+
+DoNFT is a decentralized protocol that allows
+- modification of NFT with the help of different algorithms, for example neural networks. These algorithms can be created by anyone and incorporated in our service. 
+- bundling a few NFTs to a single NFT.
+
+https://docs.google.com/document/d/13RSSjjvsALcE6zmQkGFvekFzQJk5ILa4tfJCa4TD3Rg/edit?usp=sharing
+
+## Links
+
+https://twitter.com/DoNFTio
+
+https://Donft.io
+

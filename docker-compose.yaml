@@ -1,0 +1,73 @@
+version: "3.9"
+services:
+  nginx_cert:
+    image: nginxproxy/nginx-proxy
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/nginx/certs
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./infra/conf.d:/etc/nginx/conf.d
+  acme:
+    image: nginxproxy/acme-companion
+    restart: always
+    volumes_from:
+      - nginx_cert
+    volumes:
+      - /etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  donft_backend_constructor:
+    build:
+      context: ./backend/
+      dockerfile: ./cryptopunk_constructor/Dockerfile
+      args:
+        buildno: 1
+    ports:
+      - 8001:8001
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+    environment:
+      - PUBLIC_HOST=gendev.donft.io
+      - VIRTUAL_HOST=gendev.donft.io
+      - LETSENCRYPT_HOST=gendev.donft.io
+      - GRAPH_URL=https://api.thegraph.com/subgraphs/name/amxx/eip721-subgraph
+      - HOST=0.0.0.0
+      - PORT=8001
+      - ENVIRONMENT=DEV
+      - IPFS_API_HOST=https://ipfs.infura.io:5001/api/v0/
+      - SERVICE_EFFECT=CRYPTOPUNK_CONSTRUCTOR
+      - ETH_NODE=https://rinkeby.infura.io/v3/3b59a3e5f8ff42ee8cd1aa1b2fc8b335
+      - PINATA_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJhNjc0YmQ2Mi01NmRhLTRlYWQtOGJiNy1hZDdiNDJlOTBmMzciLCJlbWFpbCI6ImFyc3BlY2hlbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6>
+      - IPFS_API_TIMEOUT=200
+      #- IPFS_SERVICE=PINATA
+      - IPFS_SERVICE=NFT_STORAGE
+      - NFT_STORAGE_API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDA5QWEwMEQxNjNFZTk0MDM1RGIwM0I3ODg2NmMyRWUzZTBjMjEzQkIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MDYzMzQ3MDIzNCwibmFtZSI>
+      - MAILERLITE_API_KEY=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiZDgxNWE4ZjViMzg0YmZjMzhiYzVlMDc1Y2NkNjgwN2QzOTI5MTFmNjBkZjBlYTI0MTMzZTYyODFjNjg1MTNkZDU0MWZmODQ1OGRjMWU3MjIiLCJpYXQiOjE2NTYwNzgwNTEuMDI0MDAzLCJuYmYiOjE2NTYwNzgwNTEuMDI0MDA3LCJleHAiOjQ4MTE3NTE2NTEuMDE5MTA0LCJzdWIiOiIxMDczMzYiLCJzY29wZXMiOltdfQ.E_XIP1Ow41QHfoNWjKgJc_LkVBSrozfw5xzaYA3Ekhg2CbY1dz7UF25rynpcX_Zqz8suN3L1sFHYXeFPsavJW9D2Wn8JPdiuorVY3W2trlH5kSNKFnbFiFisCeytrF5eBmCoYSAZU-TwdZ-9C4IrhGYcn5UQ0phYvtcukWLJN8_R3e8_Ledq7GxXSHoSZYrdXxN-Dr5iHSKmY1ZeFKZj9HESNbJRBnu1eHD83uzHuWarssnfQcxq_qNpx-lDB_vJmm8mg0LpcFzmmvV4z1ANqfVw3zEHnSZJgXBIJcBRIHW2CrS1Y1YnHblqtXW4BMIMN4DuYVx_92Jvnn4BjCkExFGl22HGGwiZdCNlJnnia9k6EJuicC0FClEBcd2cEPqxMMmmil-leasxRN3gKBUH4oMFblpe-g8MgpiPH0Pg7Nc9UWiTkyAUHooOPE4KXz3XxuR344a0m__Dc7PxsT-ZQaADxw_WsxX50G8usT1J-beV1uaIiYvRHu8ugQHjwmyzZ2155W6RaNeuZgnLeBmrEcYjJptK1cl6kLGXFzIRGH6wY44S_yu5TlRzwP5cQFPc4GtfyG5ZSyhUG9JFfLZEc-ZjVmx4ALm7QfZ9xsdDSpO09dk-DLEGkTfFJ8_31SjyWvnuxexrVCG_v2AvNRF0-yuFqGWW0b4okdZNac6dMHI
+    volumes:
+      - /root/Donft-mvp/backend:/backend/
+  donft_char:
+    build: ./frontend
+    restart: always
+    environment:
+      - VIRTUAL_HOST=ethcc.donft.io
+      - LETSENCRYPT_HOST=ethcc.donft.io
+      - VUE_APP_API_ENDPOINT=https://gen.donft.io/api
+      - VUE_APP_API_TIMEOUT=200
+      - VUE_APP_MOBILE_SKETCH=900
+      - VUE_APP_NETWORK=testnet
+      - VUE_APP_NETWORK_MATICMUM_SUPPORT=1
+      - VUE_APP_NETWORK_CRONOS_TESTNET_SUPPORT=1
+      - VUE_APP_NETWORK_SOKOL_TESTNET_SUPPORT=1
+      - VUE_APP_NETWORK_NEON_DEVNET_SUPPORT=1
+      - VUE_APP_NETWORK_POLYGON_MAINNET_SUPPORT=0
+      - VUE_APP_OPENSEA_PROVIDER=true
