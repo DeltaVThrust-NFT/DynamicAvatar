@@ -102,6 +102,7 @@ class SmartContract {
                     contractAddress: this._address,
                     address: arrayOfTokensIds[index],
                     uri: arrayOfTokensURI[index],
+                    origin: tokenObject,
                     ...tokenObject
                 })
             })
@@ -127,6 +128,7 @@ class SmartContract {
             id: tokenID,
             contractAddress: this._address,
             uri: tokenURI,
+            origin: tokenObject,
             ...tokenObject
         })
     }

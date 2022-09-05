@@ -61,13 +61,12 @@ services:
     environment:
       - VIRTUAL_HOST=ethcc.donft.io
       - LETSENCRYPT_HOST=ethcc.donft.io
-      - VUE_APP_API_ENDPOINT=https://gen.donft.io/api
-      - VUE_APP_API_TIMEOUT=200
-      - VUE_APP_MOBILE_SKETCH=900
+      - VUE_APP_API_ENDPOINT=https://style.donft.io/api
+      - VUE_APP_STORAGE_ENDPOINT=https://gendev.donft.io/api/effects/storage
+      - VUE_APP_APPLY_EFFECT_ENDPOINT=https://gendev.donft.io/api/effects/applyEffect
+      - VUE_APP_API_TIMEOUT=30
       - VUE_APP_NETWORK=testnet
       - VUE_APP_NETWORK_MATICMUM_SUPPORT=1
-      - VUE_APP_NETWORK_CRONOS_TESTNET_SUPPORT=1
-      - VUE_APP_NETWORK_SOKOL_TESTNET_SUPPORT=1
-      - VUE_APP_NETWORK_NEON_DEVNET_SUPPORT=1
-      - VUE_APP_NETWORK_POLYGON_MAINNET_SUPPORT=0
-      - VUE_APP_OPENSEA_PROVIDER=true
+      - VUE_APP_NETWORK_RINKEBY_SUPPORT=1
+      - VUE_APP_BUNDLE_INTERFACE_ID=0x19FBAC2F
+      - VUE_APP_IS_SELFIE_AVAILABLE=0

@@ -49,6 +49,22 @@
         if(!newState) store.cleanSavedTokensForBundle()
     })
 
+    /*const img = await fetch('https://gendev.donft.io/api/effects/applyEffect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "original_url": "https://gendev.donft.io/api/effects/storage/63",
+            "modificator_urls": [
+                "https://gendev.donft.io/api/effects/storage/84"
+            ]
+        })
+    }).then(r => r.blob())
+    console.log('test img');
+    console.log(img);
+    console.log(URL.createObjectURL(img));*/
+
     const chooseToken = async (token, contract) => {
         if(isBundleMode.value) store.toggleTokenForBundle(token)
         else{

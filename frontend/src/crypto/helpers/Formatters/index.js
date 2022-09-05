@@ -33,6 +33,7 @@ export function tokenFormat({
     description = null,
     link = null,
     uri = null,
+    origin = null,
     attributes = []
 }){
    if(image && image.startsWith('ipfs://ipfs/')) image = image.replace('ipfs://', 'https://ipfs.io/')
@@ -54,6 +55,7 @@ export function tokenFormat({
         attributes,
         fieldsForView,
         inner: [],
-        innerLoading: false
+        innerLoading: false,
+        origin
    }
 }

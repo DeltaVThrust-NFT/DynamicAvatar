@@ -40,22 +40,32 @@ export async function getTokenImageFileByName(inputName) {
     })
 }
 
-export async function applyAssets(serverURL, original, modifier){
+export function getBaseFileURL(url){
+    return url.split('#').shift()
+}
+
+export function getFileIdByURL(url){
+    return url.split('#').shift().split('/').pop()
+}
+
+export async function applyAssets(serverURL, original_url, modificator_urls = []){
     const sendBody = {
-        original: {
-            contract: original.contractAddress,
-            tokenId: original.id,
-            contentUrl: original.image
-        },
-        modificator: {
-            contract: modifier.contractAddress,
-            tokenId: modifier.id,
-            contentUrl: modifier.image
-        },
-        sender: ConnectionStore.getUserIdentity()
+        original_url,
+        modificator_urls
+        // original: {
+        //     contract: original.contractAddress,
+        //     tokenId: original.id,
+        //     contentUrl: original.image
+        // },
+        // modificator: {
+        //     contract: modifier.contractAddress,
+        //     tokenId: modifier.id,
+        //     contentUrl: modifier.image
+        // },
+        // sender: ConnectionStore.getUserIdentity()
     }
 
-    const {headers, data: blobImage} = await HTTP.post(
+    const {data: blobImage} = await HTTP.post(
         serverURL,
         sendBody,
         {
@@ -63,10 +73,14 @@ export async function applyAssets(serverURL, original, modifier){
         }
     )
 
+    const newImage = new File([blobImage], 'image', {
+        lastModified: new Date(),
+        type: blobImage.type
+    })
+
     return {
-        url: `https://ipfs.io/${headers.contenturl.replace(':/', '')}`,
+        file: newImage,
         blob: URL.createObjectURL(blobImage),
-        cid: headers.contenturl.split('://').pop()
     }
 }
 

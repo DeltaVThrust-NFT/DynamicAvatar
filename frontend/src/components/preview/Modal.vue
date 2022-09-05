@@ -30,7 +30,7 @@
       >
         <div
           class="preview__token"
-          :style="computeTokenImgStyle(preview.token.image)"
+          :style="tokenImage"
         ></div>
         <div
           class="preview__inside"
@@ -58,12 +58,12 @@
         >
           Info
         </div>
-        <div class="btn"
+        <!--<div class="btn"
              :class="{active: section === 'apply', na: !CollectionType.canApplyEffect(preview.contract.type)}"
              @click="CollectionType.canApplyEffect(preview.contract.type)? changeSection('apply') : null"
         >
           Apply effect
-        </div>
+        </div>-->
         <div class="btn"
              v-if="CollectionType.isBundle(preview.contract.type)"
              :class="{active: section === 'add'}"
@@ -98,7 +98,7 @@
         <ApplyAssets v-if="section === 'apply'" @close="close"/>
         <AddAssetSection v-else-if="section === 'add'" @close="close"/>
         <SendSection v-else-if="section === 'send'" :token="preview.token" @close="close"/>
-        <InfoSection v-else :token="preview.token"/>
+        <InfoSection v-else :token="preview.token" @setTempImage="setTempImage"/>
       </div>
     </div>
   </div>
@@ -129,6 +129,12 @@
       preview,
       getExplorerLink
   } = storeToRefs(store);
+
+  const tokenTempImage = ref(null)
+  const setTempImage = image => tokenTempImage.value = image
+  const tokenImage = computed(() => {
+      return tokenTempImage.value && computeTokenImgStyle(tokenTempImage.value) || computeTokenImgStyle(preview.value.token.image)
+  })
 
   const title = computed(() => {
       const collectionName = CollectionType.getCollectionName(preview.value.contract.type)
@@ -188,6 +194,7 @@
                   TrnView
                       .open({hash})
                       .onClose(async () => {
+                          console.log('update', contractsNeedToUpdate)
                           await AppConnector.connector.updateContractTokensList(contractsNeedToUpdate)
                           await AppConnector.connector.getWrappedTokensObjectList(preview.value.token.contractAddress, preview.value.token.id)
                       })
