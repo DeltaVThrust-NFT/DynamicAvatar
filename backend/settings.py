@@ -41,9 +41,6 @@ SERVICE_EFFECT = env.enum(
     default=ServiceEffect.ANIMATION.value,
 )
 
-with open(BACKEND_DIR / "version.txt", "r") as f:
-    PROJECT_VERSION = f.read().replace('/n', '')
-
 HOST = env.str("HOST", "127.0.0.1")
 PORT = env.int("PORT", 8000)
 GRAPH_URL = env.str("GRAPH_URL")
