@@ -55,4 +55,5 @@ class ImageManager(BaseFileManager):
         return io.BytesIO(payload)
 
     def get_content_type(self, file_name: str) -> str:
-        return 'image/gif'
+        image_type = file_name.split('.')[-1]
+        return f"image/{image_type}"
