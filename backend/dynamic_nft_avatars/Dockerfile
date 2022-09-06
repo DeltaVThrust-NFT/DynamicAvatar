@@ -16,7 +16,7 @@ RUN poetry config virtualenvs.create false
 RUN poetry install -vvv
 
 COPY . /backend
-COPY /root/donft/DynamicAvatar/ipfs-kit /backend
+COPY ./ipfs-kit /backend
 
 # Start app
 CMD ["python", "main.py"]
