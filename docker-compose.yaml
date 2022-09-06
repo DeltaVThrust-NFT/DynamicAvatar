@@ -58,6 +58,7 @@ services:
     volumes:
       - /root/donft/DynamicAvatar/backend:/backend/
       - /root/donft/DynamicAvatar/ipfs-kit/ipfs:/backend/ipfs
+      - /root/donft/data_storage_dynamic_avatar:/backend/data_storage_dynamic_avatar
 #  donft_char:
 #    build: ./frontend
 #    restart: always
