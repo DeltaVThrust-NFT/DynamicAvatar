@@ -44,7 +44,8 @@ const settings = {
 
         // new from MVP (with add/remove)
         bundleContract: '0x153FF94EEC8ed695b985f7658a48B67D79c78Ca6',
-        effectsContract: '0x3c4269CC3c86a558cA5162D8E682543e040F71de',
+        // effectsContract: '0x3c4269CC3c86a558cA5162D8E682543e040F71de',
+        effectsContract: '0x8b495627fec300f6c13da67d221ce02a8c8f264c',
         whiteListContract: '0x8eb4064C391CBa932a1ebb6431260326C6485E36',
 
         testContract: '0x9b7f8bdb86696300b734944cefa35b42c5eb3aa1',

@@ -151,42 +151,56 @@ export const useStore = defineStore('main', {
             [CollectionType.EFFECT]: [
                 {
                     isForBuy: true,
-                    image: '/img/test-tokens/mountains_1.jpeg',
-                    name: 'Mountains 1',
-                    cid: 'bafybeihoistczqwg3xyzebwjp2vtjtem3qryuukr5skwng2fcrhumvkdea/file'
+                    image: '/img/characters/star_1.png',
+                    name: 'Star',
+                    description: '',
+                    link: null
                 },
-                {
-                    isForBuy: true,
-                    image: '/img/test-tokens/mountains_2.jpeg',
-                    name: 'Mountains 2',
-                    cid: 'bafybeie4cexpij2k6px4cprqektt6alkdvv2p7w4ujdnocmxs67dv75rpe/file'
-                },
-                {
-                    isForBuy: true,
-                    image: '/img/test-tokens/mountains_3.jpeg',
-                    name: 'Mountains 3',
-                    cid: 'bafybeigdiwy2iay2nnmxemzdfnvbbedmiwzg5pppnl2jcptbv4c3c4yxbe/file'
-                }
+                // {
+                //     isForBuy: true,
+                //     image: '/img/test-tokens/mountains_1.jpeg',
+                //     name: 'Mountains 1',
+                //     cid: 'bafybeihoistczqwg3xyzebwjp2vtjtem3qryuukr5skwng2fcrhumvkdea/file'
+                // },
+                // {
+                //     isForBuy: true,
+                //     image: '/img/test-tokens/mountains_2.jpeg',
+                //     name: 'Mountains 2',
+                //     cid: 'bafybeie4cexpij2k6px4cprqektt6alkdvv2p7w4ujdnocmxs67dv75rpe/file'
+                // },
+                // {
+                //     isForBuy: true,
+                //     image: '/img/test-tokens/mountains_3.jpeg',
+                //     name: 'Mountains 3',
+                //     cid: 'bafybeigdiwy2iay2nnmxemzdfnvbbedmiwzg5pppnl2jcptbv4c3c4yxbe/file'
+                // }
             ],
             [CollectionType.NONE]: [
                 {
                     isForBuy: true,
-                    image: '/img/test-tokens/mountains_1.jpeg',
-                    name: 'Mountains 1',
-                    cid: 'bafybeihoistczqwg3xyzebwjp2vtjtem3qryuukr5skwng2fcrhumvkdea/file'
+                    image: '/img/characters/star_1.png',
+                    name: 'Star',
+                    description: '',
+                    link: null
                 },
-                {
-                    isForBuy: true,
-                    image: '/img/test-tokens/mountains_2.jpeg',
-                    name: 'Mountains 2',
-                    cid: 'bafybeie4cexpij2k6px4cprqektt6alkdvv2p7w4ujdnocmxs67dv75rpe/file'
-                },
-                {
-                    isForBuy: true,
-                    image: '/img/test-tokens/mountains_3.jpeg',
-                    name: 'Mountains 3',
-                    cid: 'bafybeigdiwy2iay2nnmxemzdfnvbbedmiwzg5pppnl2jcptbv4c3c4yxbe/file'
-                }
+                // {
+                //     isForBuy: true,
+                //     image: '/img/test-tokens/mountains_1.jpeg',
+                //     name: 'Mountains 1',
+                //     cid: 'bafybeihoistczqwg3xyzebwjp2vtjtem3qryuukr5skwng2fcrhumvkdea/file'
+                // },
+                // {
+                //     isForBuy: true,
+                //     image: '/img/test-tokens/mountains_2.jpeg',
+                //     name: 'Mountains 2',
+                //     cid: 'bafybeie4cexpij2k6px4cprqektt6alkdvv2p7w4ujdnocmxs67dv75rpe/file'
+                // },
+                // {
+                //     isForBuy: true,
+                //     image: '/img/test-tokens/mountains_3.jpeg',
+                //     name: 'Mountains 3',
+                //     cid: 'bafybeigdiwy2iay2nnmxemzdfnvbbedmiwzg5pppnl2jcptbv4c3c4yxbe/file'
+                // }
             ]
         },
 
@@ -217,21 +231,28 @@ export const useStore = defineStore('main', {
         }
     },
     actions: {
-        updateTokenImageAndAttributes(token, newAttributed){
-            // console.log(token);
+        updateTokenImageAndAttributes(token, newAttributed = null, newImage = null){
             const collection = this.collections.find(contract => stringCompare(contract.address, token.contractAddress))
             const tokenInCollection = collection.tokens.find(t => stringCompare(t.id, token.id))
 
-            // console.log(this.preview.token);
-
-            const currentImage = new URL(this.preview.token.image)
+            const currentImage = new URL(newImage || this.preview.token.image)
             currentImage.hash = `#${Date.now()}`
 
+            // update token in preview
             this.preview.token.image = currentImage.toString()
-            this.preview.token.attributes = newAttributed
+            if(newImage) this.preview.token.origin.image = newImage
+            if(newAttributed) {
+                this.preview.token.attributes = newAttributed
+                this.preview.token.origin.attributes = newAttributed
+            }
 
+            // update token in gallery
             tokenInCollection.image = currentImage.toString()
-            tokenInCollection.attributes = newAttributed
+            if(newImage) tokenInCollection.origin.image = newImage
+            if(newAttributed) {
+                tokenInCollection.attributes = newAttributed
+                tokenInCollection.origin.attributes = newAttributed
+            }
         },
         toggleTokenForBundle(token){
             if(this.selectedForBundle.identities.includes(token.identity)) this.selectedForBundle.identities = this.selectedForBundle.identities.filter(t => !stringCompare(t, token.identity))

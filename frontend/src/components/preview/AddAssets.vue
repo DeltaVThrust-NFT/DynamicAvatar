@@ -6,7 +6,7 @@
     <div class="preview__modifiers">
 
       <ContractElement
-        v-for="contract in collections"
+        v-for="contract in collectionsToChoose"
         :contract="contract"
         :selectedTokens="selectedIdentities"
         :notAvailable="[preview.token.identity]"
@@ -19,7 +19,7 @@
       <span></span>
       <div
         class="btn"
-        v-show="selected"
+        v-show="selected.length"
         @click="confirm"
       >Add</div>
     </div>
@@ -44,6 +44,8 @@ const {
     preview,
     collections
 } = storeToRefs(store);
+
+const collectionsToChoose = computed(() => collections.value.filter(c => c.address !== preview.value.contract.address))
 
 const selected = ref([])
 const selectedIdentities = computed(() => selected.value.map(token => token.identity))

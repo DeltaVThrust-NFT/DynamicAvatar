@@ -13,7 +13,7 @@ import {stringCompare} from "@/utils/string";
 import alert from "@/utils/alert";
 import {ethers} from "ethers";
 import {log} from "@/utils/AppLogger";
-import {getTokenImageFileByName, Traits} from "@/crypto/helpers/Token";
+import {Traits} from "@/crypto/helpers/Token";
 
 class EVM {
 
@@ -44,12 +44,12 @@ class EVM {
 
         const {
             bundleContract,
-            // effectsContract,
+            effectsContract,
             // testContract
         } = Networks.getSettings(ConnectionStore.getNetwork().name)
 
         // const contractsList = [bundleContract, effectsContract, testContract]
-        const contractsList = [bundleContract]
+        const contractsList = [bundleContract, effectsContract]
 
         const collections = await Promise.all(contractsList.map(contractAddress => this.getContractWithTokens(contractAddress)))
 
@@ -57,19 +57,56 @@ class EVM {
         storage.setCollections(collections)
     }
 
-    async saveNewAttributes(token, {age, mood}){
-        const newImageName = `${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
-        const imageFile = await Token.getTokenImageFileByName(newImageName)
+    async generateNewTokenImage({age, mood}, {inner = []} = {}){
+        const baseImage = new URL(window.location.href)
+        baseImage.pathname = `/img/characters/${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
+        const baseImageURL = baseImage.toString()
 
-        const prevTokenImgId = token.image.split('#').shift().split('/').pop()
+        const applyEffectImages = inner.map(t => t.image)
+
+        if(applyEffectImages.length){
+            const {file, blob} = await Token.applyAssets(
+                process.env.VUE_APP_APPLY_EFFECT_ENDPOINT,
+                baseImageURL,
+                applyEffectImages
+            )
+            const baseFile = await Token.getTokenImageFileByName(baseImageURL)
+            return {
+                file,
+                baseFile,
+                tempURL: blob,
+            }
+        }
+        const file = await Token.getTokenImageFileByName(baseImageURL)
+        return {
+            file,
+            baseFile: file,
+            tempURL: baseImageURL
+        }
+    }
+
+    async saveNewAttributes(token, {age, mood}){
+        const {file: imageFile, baseFile} = await this.generateNewTokenImage({age, mood}, token)
+
+        // console.log('imageFile', imageFile, URL.createObjectURL(imageFile))
+        // console.log('imageFile', imageFile)
+        // console.log('baseFile', baseFile, URL.createObjectURL(baseFile))
+        // console.log('baseFile', baseFile)
+
+        // return
+        // const newImageName = `${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
+        // const imageFile = await Token.getTokenImageFileByName(newImageName)
+
+        const prevTokenImgId = Token.getFileIdByURL(token.origin.image)
         await DecentralizedStorage.changeFile(imageFile, prevTokenImgId)
 
+        if(token.origin.image !== token.origin.image_origin){
+            const originTokenImgId = Token.getFileIdByURL(token.origin.image_origin)
+            await DecentralizedStorage.changeFile(baseFile, originTokenImgId)
+        }
 
         const newMetaData = {
-            name: token.name,
-            image: token.image,
-            description: token.description,
-            link: token.link,
+            ...token.origin,
             attributes: [
                 {
                     trait_type: 'age',
@@ -81,9 +118,24 @@ class EVM {
                 }
             ]
         }
+        // const newMetaData = {
+        //     name: token.name,
+        //     image: token.image,
+        //     description: token.description,
+        //     link: token.link,
+        //     attributes: [
+        //         {
+        //             trait_type: 'age',
+        //             value: +age
+        //         },
+        //         {
+        //             trait_type: 'mood',
+        //             value: +mood
+        //         }
+        //     ]
+        // }
 
-        const URI_id = token.uri.split('/').pop()
-
+        const URI_id = Token.getFileIdByURL(token.uri)
         await DecentralizedStorage.changeFile(newMetaData, URI_id)
 
         const storage = AppStorage.getStore()
@@ -222,9 +274,10 @@ class EVM {
         const saveMeta = {
             name: meta.name,
             image: imageURL,
+            image_origin: imageURL,
             link: meta.link,
             description: meta.description,
-            attributes: meta.attributes
+            attributes: meta.attributes || []
         }
 
         const metaURL = await DecentralizedStorage.loadJSON(saveMeta)
