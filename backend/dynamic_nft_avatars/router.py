@@ -21,7 +21,7 @@ from dynamic_nft_avatars.base_effect_router import response_content
 from dynamic_nft_avatars.data_store import DataStore
 from dynamic_nft_avatars.data_store import DataStoreException
 
-router = APIRouter(prefix="api/effects")
+router = APIRouter(prefix="/api/effects")
 ds = DataStore()
 
 
