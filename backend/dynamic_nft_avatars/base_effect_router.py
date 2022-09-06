@@ -13,9 +13,9 @@ from dynamic_nft_avatars.data_store import DataStore
 from dynamic_nft_avatars.dynamic_nft_avatar_effect_service import DynamicNFTAvatarEffectService
 from ipfs.service import IPFSServiceException
 from ipfs.service import get_ipfs_service
-from settings import NFT_STORAGE_API_TOKEN
+from settings import IPFS_SERVICE
 
-ipfs_service = get_ipfs_service(200, NFT_STORAGE_API_TOKEN)
+ipfs_service = get_ipfs_service(200, IPFS_SERVICE)
 service = DynamicNFTAvatarEffectService()
 
 
