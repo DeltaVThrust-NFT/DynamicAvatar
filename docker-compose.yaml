@@ -58,19 +58,19 @@ services:
     volumes:
       - /root/donft/DynamicAvatar/backend:/backend/
       - /root/donft/DynamicAvatar/ipfs-kit:/backend/ipfs-kit
-  donft_char:
-    build: ./frontend
-    restart: always
-    environment:
-      - VIRTUAL_HOST=ethcc.donft.io
-      - LETSENCRYPT_HOST=ethcc.donft.io
-      - VUE_APP_API_ENDPOINT=https://gen.donft.io/api
-      - VUE_APP_API_TIMEOUT=200
-      - VUE_APP_MOBILE_SKETCH=900
-      - VUE_APP_NETWORK=testnet
-      - VUE_APP_NETWORK_MATICMUM_SUPPORT=1
-      - VUE_APP_NETWORK_CRONOS_TESTNET_SUPPORT=1
-      - VUE_APP_NETWORK_SOKOL_TESTNET_SUPPORT=1
-      - VUE_APP_NETWORK_NEON_DEVNET_SUPPORT=1
-      - VUE_APP_NETWORK_POLYGON_MAINNET_SUPPORT=0
-      - VUE_APP_OPENSEA_PROVIDER=true
+#  donft_char:
+#    build: ./frontend
+#    restart: always
+#    environment:
+#      - VIRTUAL_HOST=ethcc.donft.io
+#      - LETSENCRYPT_HOST=ethcc.donft.io
+#      - VUE_APP_API_ENDPOINT=https://gen.donft.io/api
+#      - VUE_APP_API_TIMEOUT=200
+#      - VUE_APP_MOBILE_SKETCH=900
+#      - VUE_APP_NETWORK=testnet
+#      - VUE_APP_NETWORK_MATICMUM_SUPPORT=1
+#      - VUE_APP_NETWORK_CRONOS_TESTNET_SUPPORT=1
+#      - VUE_APP_NETWORK_SOKOL_TESTNET_SUPPORT=1
+#      - VUE_APP_NETWORK_NEON_DEVNET_SUPPORT=1
+#      - VUE_APP_NETWORK_POLYGON_MAINNET_SUPPORT=0
+#      - VUE_APP_OPENSEA_PROVIDER=true
