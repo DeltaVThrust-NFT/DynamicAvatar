@@ -1,8 +1,11 @@
+from fastapi import APIRouter
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from dynamic_nft_avatars.router import router
+from dynamic_nft_avatars.router import router as effect_router
 
+router = APIRouter(prefix="/api")
+router.include_router(effect_router)
 app = FastAPI()
 
 app.add_middleware(
