@@ -20,10 +20,10 @@ services:
     volumes:
       - /etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
-  donft_backend_constructor:
+  donft_backend_dynamic_nft_avatar:
     build:
       context: ./backend/
-      dockerfile: ./cryptopunk_constructor/Dockerfile
+      dockerfile: ./dynamic_nft_avatars/Dockerfile
       args:
         buildno: 1
     ports:
@@ -45,28 +45,33 @@ services:
       - PORT=8001
       - ENVIRONMENT=DEV
       - IPFS_API_HOST=https://ipfs.infura.io:5001/api/v0/
-      - SERVICE_EFFECT=CRYPTOPUNK_CONSTRUCTOR
+      - SERVICE_EFFECT=DYNAMIC_NFT_AVATAR
+      - STYLE_ID=17
+      - STYLE_MODE=cartoon
       - ETH_NODE=https://rinkeby.infura.io/v3/3b59a3e5f8ff42ee8cd1aa1b2fc8b335
       - PINATA_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJhNjc0YmQ2Mi01NmRhLTRlYWQtOGJiNy1hZDdiNDJlOTBmMzciLCJlbWFpbCI6ImFyc3BlY2hlbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6>
-      - IPFS_API_TIMEOUT=200
+      - IPFS_API_TIMEOUT=20000
       #- IPFS_SERVICE=PINATA
       - IPFS_SERVICE=NFT_STORAGE
-      - NFT_STORAGE_API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDA5QWEwMEQxNjNFZTk0MDM1RGIwM0I3ODg2NmMyRWUzZTBjMjEzQkIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MDYzMzQ3MDIzNCwibmFtZSI>
+      - NFT_STORAGE_API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDA5QWEwMEQxNjNFZTk0MDM1RGIwM0I3ODg2NmMyRWUzZTBjMjEzQkIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1NjA4MTE4NDE5MSwibmFtZSI6IkRvTkZUZGV2In0.oVUvdLV-XEEl6VJvvV-nRlhlrtuQTydau_IAntj56Wg
       - MAILERLITE_API_KEY=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiZDgxNWE4ZjViMzg0YmZjMzhiYzVlMDc1Y2NkNjgwN2QzOTI5MTFmNjBkZjBlYTI0MTMzZTYyODFjNjg1MTNkZDU0MWZmODQ1OGRjMWU3MjIiLCJpYXQiOjE2NTYwNzgwNTEuMDI0MDAzLCJuYmYiOjE2NTYwNzgwNTEuMDI0MDA3LCJleHAiOjQ4MTE3NTE2NTEuMDE5MTA0LCJzdWIiOiIxMDczMzYiLCJzY29wZXMiOltdfQ.E_XIP1Ow41QHfoNWjKgJc_LkVBSrozfw5xzaYA3Ekhg2CbY1dz7UF25rynpcX_Zqz8suN3L1sFHYXeFPsavJW9D2Wn8JPdiuorVY3W2trlH5kSNKFnbFiFisCeytrF5eBmCoYSAZU-TwdZ-9C4IrhGYcn5UQ0phYvtcukWLJN8_R3e8_Ledq7GxXSHoSZYrdXxN-Dr5iHSKmY1ZeFKZj9HESNbJRBnu1eHD83uzHuWarssnfQcxq_qNpx-lDB_vJmm8mg0LpcFzmmvV4z1ANqfVw3zEHnSZJgXBIJcBRIHW2CrS1Y1YnHblqtXW4BMIMN4DuYVx_92Jvnn4BjCkExFGl22HGGwiZdCNlJnnia9k6EJuicC0FClEBcd2cEPqxMMmmil-leasxRN3gKBUH4oMFblpe-g8MgpiPH0Pg7Nc9UWiTkyAUHooOPE4KXz3XxuR344a0m__Dc7PxsT-ZQaADxw_WsxX50G8usT1J-beV1uaIiYvRHu8ugQHjwmyzZ2155W6RaNeuZgnLeBmrEcYjJptK1cl6kLGXFzIRGH6wY44S_yu5TlRzwP5cQFPc4GtfyG5ZSyhUG9JFfLZEc-ZjVmx4ALm7QfZ9xsdDSpO09dk-DLEGkTfFJ8_31SjyWvnuxexrVCG_v2AvNRF0-yuFqGWW0b4okdZNac6dMHI
     volumes:
-      - /root/Donft-mvp/backend:/backend/
-  donft_char:
-    build: ./frontend
-    restart: always
-    environment:
-      - VIRTUAL_HOST=ethcc.donft.io
-      - LETSENCRYPT_HOST=ethcc.donft.io
-      - VUE_APP_API_ENDPOINT=https://style.donft.io/api
-      - VUE_APP_STORAGE_ENDPOINT=https://gendev.donft.io/api/effects/storage
-      - VUE_APP_APPLY_EFFECT_ENDPOINT=https://gendev.donft.io/api/effects/applyEffect
-      - VUE_APP_API_TIMEOUT=30
-      - VUE_APP_NETWORK=testnet
-      - VUE_APP_NETWORK_MATICMUM_SUPPORT=1
-      - VUE_APP_NETWORK_RINKEBY_SUPPORT=1
-      - VUE_APP_BUNDLE_INTERFACE_ID=0x19FBAC2F
-      - VUE_APP_IS_SELFIE_AVAILABLE=0
+      - /root/donft/DynamicAvatar/backend:/backend/
+      - /root/donft/DynamicAvatar/ipfs-kit/ipfs:/backend/ipfs
+      - /root/donft/data_storage_dynamic_avatar:/backend/data_storage_dynamic_avatar
+#  donft_char:
+#    build: ./frontend
+#    restart: always
+#    environment:
+#      - VIRTUAL_HOST=ethcc.donft.io
+#      - LETSENCRYPT_HOST=ethcc.donft.io
+#      - VUE_APP_API_ENDPOINT=https://gen.donft.io/api
+#      - VUE_APP_API_TIMEOUT=200
+#      - VUE_APP_MOBILE_SKETCH=900
+#      - VUE_APP_NETWORK=testnet
+#      - VUE_APP_NETWORK_MATICMUM_SUPPORT=1
+#      - VUE_APP_NETWORK_CRONOS_TESTNET_SUPPORT=1
+#      - VUE_APP_NETWORK_SOKOL_TESTNET_SUPPORT=1
+#      - VUE_APP_NETWORK_NEON_DEVNET_SUPPORT=1
+#      - VUE_APP_NETWORK_POLYGON_MAINNET_SUPPORT=0
+#      - VUE_APP_OPENSEA_PROVIDER=true
