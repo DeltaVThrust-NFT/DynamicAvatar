@@ -1,15 +1,17 @@
 <template>
   <div class="token-data__visual">
-    <div>Age:</div>
-    <div>
-      <input type="range" :min="0" :max="Object.keys(Traits.age).length - 1" v-model="tokenAge">
-      {{ ageSelected }}
-    </div>
-    <div>Mood:</div>
-    <div>
-      <input type="range" :min="1" :max="Object.keys(Traits.mood).length" v-model="tokenMood">
-      {{ moodSelected }}
-    </div>
+    <template v-if="isAttributesAvailable">
+      <div>Age:</div>
+      <div>
+        <input type="range" :min="0" :max="Object.keys(Traits.age).length - 1" v-model="tokenAge">
+        {{ ageSelected }}
+      </div>
+      <div>Mood:</div>
+      <div>
+        <input type="range" :min="1" :max="Object.keys(Traits.mood).length" v-model="tokenMood">
+        {{ moodSelected }}
+      </div>
+    </template>
     <template v-for="prop in viewProps">
       <div v-text="prop.name + ':'"></div>
       <div v-text="prop.value"></div>
@@ -31,7 +33,11 @@
     import AppConnector from "@/crypto/AppConnector";
     import alert from "@/utils/alert";
     import {getErrorTextByCode} from "@/crypto/helpers";
+    import {CollectionType} from "@/utils/collection";
     import LoaderElement from '@/components/UI/Loader'
+    import {useStore} from "@/store/main";
+
+    const store = useStore()
 
     const propKeys = {
         name: 'Name',
@@ -41,6 +47,11 @@
 
     const props = defineProps(['token'])
     const emits = defineEmits(['setTempImage'])
+
+    const isAttributesAvailable = computed(() => {
+        const contract = store.findContractObject(props.token.contractAddress)
+        return CollectionType.isBundle(contract.type)
+    })
 
     const age = props.token.attributes.find(attribute => attribute.trait_type === 'age')?.value || Traits.age.baby
     const mood = props.token.attributes.find(attribute => attribute.trait_type === 'mood')?.value || Traits.mood.general
@@ -58,17 +69,17 @@
 
     const haveAttributesChanges = ref(false)
 
-    let dontApplyChanges = false
+    // let dontApplyChanges = false
     watch([tokenAge, tokenMood], async () => {
-        if(dontApplyChanges) {
-            dontApplyChanges = false
-            return
-        }
+        // if(dontApplyChanges) {
+        //     dontApplyChanges = false
+        //     return
+        // }
         haveAttributesChanges.value = true
 
         // emits('setTempImage', '/img/characters/' + AppConnector.connector.generateNewTokenImage({age: tokenAge.value, mood: tokenMood.value}))
-        const {tempURL} = await AppConnector.connector.generateNewTokenImage({age: tokenAge.value, mood: tokenMood.value}, props.token)
-        emits('setTempImage', tempURL)
+        // const {tempURL} = await AppConnector.connector.generateNewTokenImage({age: tokenAge.value, mood: tokenMood.value}, props.token)
+        // emits('setTempImage', tempURL)
     })
 
     const isLoading = ref(false)
@@ -90,10 +101,10 @@
     }
 
     const cancelAttributesChange = () => {
-        dontApplyChanges = true
+        // dontApplyChanges = true
         tokenAge.value = props.token.attributes.find(attribute => attribute.trait_type === 'age')?.value || Traits.age.baby
         tokenMood.value = props.token.attributes.find(attribute => attribute.trait_type === 'mood')?.value || Traits.mood.general
-        emits('setTempImage', null)
+        // emits('setTempImage', null)
         nextTick(() => {
             haveAttributesChanges.value = false
         })
