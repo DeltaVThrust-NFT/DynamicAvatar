@@ -58,11 +58,13 @@ class EVM {
     }
 
     async generateNewTokenImage({age, mood}, {inner = []} = {}){
+        const store = AppStorage.getStore()
+
         const baseImage = new URL(window.location.href)
         baseImage.pathname = `/img/characters/${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
         const baseImageURL = baseImage.toString()
 
-        const applyEffectImages = inner.map(t => t.image)
+        const applyEffectImages = inner.filter(t => !store.checkContractType(t.contractAddress, CollectionType.BUNDLE)).map(t => t.origin.image)
 
         if(applyEffectImages.length){
             const {file, blob} = await Token.applyAssets(
@@ -86,60 +88,48 @@ class EVM {
     }
 
     async saveNewAttributes(token, {age, mood}){
-        const {file: imageFile, baseFile} = await this.generateNewTokenImage({age, mood}, token)
+        const {file: bundleImageFile, baseFile} = await this.generateNewTokenImage({age, mood}, token)
 
-        // console.log('imageFile', imageFile, URL.createObjectURL(imageFile))
-        // console.log('imageFile', imageFile)
-        // console.log('baseFile', baseFile, URL.createObjectURL(baseFile))
-        // console.log('baseFile', baseFile)
+        const store = AppStorage.getStore()
+        const character = token.inner.find(t => store.checkContractType(t.contractAddress, CollectionType.BUNDLE))
 
-        // return
-        // const newImageName = `${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
-        // const imageFile = await Token.getTokenImageFileByName(newImageName)
+        const bundleImgId = Token.getFileIdByURL(token.origin.image)
+        await DecentralizedStorage.changeFile(bundleImageFile, bundleImgId)
 
-        const prevTokenImgId = Token.getFileIdByURL(token.origin.image)
-        await DecentralizedStorage.changeFile(imageFile, prevTokenImgId)
+        const newAttributes = [
+            {
+                trait_type: 'age',
+                value: +age
+            },
+            {
+                trait_type: 'mood',
+                value: +mood
+            }
+        ]
 
-        if(token.origin.image !== token.origin.image_origin){
-            const originTokenImgId = Token.getFileIdByURL(token.origin.image_origin)
-            await DecentralizedStorage.changeFile(baseFile, originTokenImgId)
+        const newBundleMetaData = {
+            ...JSON.parse(JSON.stringify(token.origin)),
+            newAttributes
         }
 
-        const newMetaData = {
-            ...token.origin,
-            attributes: [
-                {
-                    trait_type: 'age',
-                    value: +age
-                },
-                {
-                    trait_type: 'mood',
-                    value: +mood
-                }
-            ]
+        const bundle_URI_id = Token.getFileIdByURL(token.uri)
+        await DecentralizedStorage.changeFile(newBundleMetaData, bundle_URI_id)
+        store.updateTokenImageAndAttributes(token, newAttributes)
+
+        if(character) {
+            const characterImgId = Token.getFileIdByURL(character.origin.image)
+            await DecentralizedStorage.changeFile(baseFile, characterImgId)
+
+            const newCharacterMetaData = {
+                ...JSON.parse(JSON.stringify(character.origin)),
+                newAttributes
+            }
+
+            const character_URI_id = Token.getFileIdByURL(character.uri)
+            await DecentralizedStorage.changeFile(newCharacterMetaData, character_URI_id)
+
+            store.updateTokenImageAndAttributes(character, newAttributes)
         }
-        // const newMetaData = {
-        //     name: token.name,
-        //     image: token.image,
-        //     description: token.description,
-        //     link: token.link,
-        //     attributes: [
-        //         {
-        //             trait_type: 'age',
-        //             value: +age
-        //         },
-        //         {
-        //             trait_type: 'mood',
-        //             value: +mood
-        //         }
-        //     ]
-        // }
-
-        const URI_id = Token.getFileIdByURL(token.uri)
-        await DecentralizedStorage.changeFile(newMetaData, URI_id)
-
-        const storage = AppStorage.getStore()
-        storage.updateTokenImageAndAttributes(token, newMetaData.attributes)
 
         return true
     }
@@ -274,7 +264,7 @@ class EVM {
         const saveMeta = {
             name: meta.name,
             image: imageURL,
-            image_origin: imageURL,
+            // image_origin: imageURL,
             link: meta.link,
             description: meta.description,
             attributes: meta.attributes || []
@@ -288,27 +278,39 @@ class EVM {
         return await contract.mint(ConnectionStore.getUserIdentity(), metaURL)
     }
 
-    async createBundle(meta, image, tokens){
-        const storage = AppStorage.getStore()
+    async createBundle(tokens){
+        const store = AppStorage.getStore()
 
-        meta.attributes = [
-            {
-                trait_type: 'age',
-                value: Traits.age.baby
-            },
-            {
-                trait_type: 'mood',
-                value: Traits.mood.general
-            }
-        ]
-        storage.setProcessStatus(ActionTypes.uploading_meta_data)
+        const character = tokens.find(t => CollectionType.isBundle(t.contract.type))
+        const things = tokens.filter(t => !CollectionType.isBundle(t.contract.type))
 
-        const {
-            metaCID
-        } = await this.createTokenMeta(meta, image)
 
-        const tokensList = Token.transformIdentitiesToObjects(tokens.map(t => t.identity))
-        Token.addRole(tokensList)
+        store.setProcessStatus(ActionTypes.generating_media)
+
+        const originImages = character.token.origin.image
+        const applyImages = things.map(t => t.token.origin.image)
+
+        const {file} = await Token.applyAssets(
+            process.env.VUE_APP_APPLY_EFFECT_ENDPOINT,
+            originImages,
+            applyImages
+        )
+
+        store.setProcessStatus(ActionTypes.uploading_meta_data)
+
+        const bundleMeta = JSON.parse(JSON.stringify(character.token.origin))
+        bundleMeta.image = await DecentralizedStorage.loadFile(file)
+
+        const bundleURI = await DecentralizedStorage.loadFile(bundleMeta)
+
+        const originIdentity = character.token.identity
+        const modifierIdentities = things.map(t => t.token.identity)
+
+        const tokensList = Token.transformIdentitiesToObjects([originIdentity, ...modifierIdentities])
+        Token.addRole(tokensList, {
+            original: [originIdentity],
+            modifier: modifierIdentities
+        })
 
         const {
             bundleContract: address
@@ -316,7 +318,7 @@ class EVM {
 
         return {
             address,
-            metaCID,
+            metaCID: bundleURI,
             tokensList
         }
     }

@@ -65,7 +65,7 @@
           Apply effect
         </div>-->
         <div class="btn"
-             v-if="CollectionType.isBundle(preview.contract.type)"
+             v-if="CollectionType.isBundle(preview.contract.type) && preview.token.inner.length"
              :class="{active: section === 'add'}"
              @click="changeSection('add')"
         >
