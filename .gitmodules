@@ -1,3 +1,3 @@
-[submodule "backend/ipfs-kit"]
+[submodule "ipfs-kit"]
 	path = ipfs-kit
 	url = https://github.com/DoNFT/ipfs-kit.git
