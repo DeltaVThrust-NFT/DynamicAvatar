@@ -3,7 +3,6 @@ import logging
 from io import BytesIO
 
 import requests
-import tensorflow
 from aiohttp import ClientSession
 from aiohttp import ClientTimeout
 from fastapi import HTTPException
@@ -35,8 +34,6 @@ async def generate_content(contents, params=None):
     logging.info("[Info] Generating content")
     try:
         transformed = await service.transform(contents, params)
-    except tensorflow.errors.InvalidArgumentError as e:
-        raise HTTPException(status_code=400, detail=f"[Error] Failed to generate image. {str(e)}")
     except Exception:
         raise GenerationImageError("[Error] Failed to generate image")
     return transformed

@@ -12,11 +12,12 @@
     </template>
     <div
       class="gallery__center-btn btn"
-      v-if="selectedForBundle.identities.length > 1"
+      v-if="isMakeBundleAvailable"
       @click="makeBundle"
     >
       Make bundle
     </div>
+    <LoaderElement class="fixed with-bg" v-if="isLoading">Loading...</LoaderElement>
   </Sketch>
   <PreviewToken/>
 </template>
@@ -33,7 +34,10 @@
     import {log} from "@/utils/AppLogger";
     import {CollectionType} from "@/utils/collection";
     import {useRouter} from "vue-router";
-    import {watch} from "vue";
+    import {computed, ref, watch} from "vue";
+    import alert from "@/utils/alert";
+    import TrnView from "@/utils/TrnView";
+    import {getErrorTextByCode} from "@/crypto/helpers";
 
     const store = useStore()
 
@@ -47,6 +51,11 @@
 
     watch(isBundleMode, (newState) => {
         if(!newState) store.cleanSavedTokensForBundle()
+    })
+
+    const isMakeBundleAvailable = computed(() => {
+        const addedTokensTypes = selectedForBundle.value.identities.map(t => store.findContractObject(t.split(':').shift())?.type).filter(Boolean)
+        return addedTokensTypes.length > 1 && addedTokensTypes.includes(CollectionType.BUNDLE)
     })
 
     /*const img = await fetch('https://gendev.donft.io/api/effects/applyEffect', {
@@ -66,7 +75,15 @@
     console.log(URL.createObjectURL(img));*/
 
     const chooseToken = async (token, contract) => {
-        if(isBundleMode.value) store.toggleTokenForBundle(token)
+        if(isBundleMode.value) {
+            const addTokenContract = store.findContractObject(token.contractAddress);
+            if(addTokenContract.type === CollectionType.BUNDLE && !selectedForBundle.value.identities.includes(token.identity)){
+                const isCharacterAlreadyAdded = selectedForBundle.value.identities.map(i => i.split(':').shift()).includes(addTokenContract.address)
+                if(isCharacterAlreadyAdded) alert.open(`You can't add more than one character in bundle`)
+                else store.toggleTokenForBundle(token)
+            }
+            else store.toggleTokenForBundle(token)
+        }
         else{
             store.openPreview(token)
             try{
@@ -82,8 +99,37 @@
 
     const router = useRouter()
 
-    const makeBundle = () => {
-        store.saveMakeBundle()
-        router.push({name: 'BundlePage'})
+    const isLoading = ref(false)
+    const makeBundle = async () => {
+        const tokensForBundle = selectedForBundle.value.identities.map(i => store.getTokenWithCollectionByIdentity(i)).filter(Boolean)
+
+        try{
+            isLoading.value = true
+            const contractsNeedToUpdate = [...new Set(tokensForBundle.map(t => t.contract.address))]
+
+            const {
+                transactionHash: hash,
+            } = await AppConnector.connector.createBundle(tokensForBundle)
+
+            store.cleanSavedTokensForBundle()
+
+            TrnView
+                .open({hash})
+                .onClose(() => {
+                    log('contractsNeedToUpdate', contractsNeedToUpdate);
+                    router.push({name: 'Gallery'})
+                    AppConnector.connector.updateContractTokensList(contractsNeedToUpdate)
+                })
+        }
+        catch (e) {
+            log('Bundle', e);
+            alert.open(getErrorTextByCode(e.message) || e.message, 'Error:')
+        }
+        finally {
+            isLoading.value = false
+        }
+
+        // store.saveMakeBundle()
+        // router.push({name: 'BundlePage'})
     }
 </script>

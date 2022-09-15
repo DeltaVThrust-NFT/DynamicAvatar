@@ -6,6 +6,15 @@ import {Networks} from "@/crypto/helpers";
 import {log} from "@/utils/AppLogger";
 import {Traits} from "@/crypto/helpers/Token";
 
+function findTokenRecursively(findInToken, findIdentity) {
+    if (stringCompare(findInToken.identity, findIdentity)) return findInToken
+    for (const token of findInToken.inner) {
+        const isFind = findTokenRecursively(token, findIdentity)
+        if (isFind) return isFind
+    }
+    return null
+}
+
 export const useStore = defineStore('main', {
     state: () => ({
         isAppReady: false,
@@ -220,6 +229,13 @@ export const useStore = defineStore('main', {
         userIdentityShort: state => catToFixed(state.connection.userIdentity || ''),
         getExplorerLink: state => (type, hash = '') => state.explorers[type]? state.explorers[type] + hash : state.explorers.transaction + hash,
         findContractObject: state => contractAddress => state.collections.find(collection => stringCompare(collection.address, contractAddress)),
+        getContractType: state => contractAddress => {
+            const contract = state.findContractObject(contractAddress)
+            return contract? contract.type : null
+        },
+        checkContractType: state => (contractAddress, type) => {
+            return state.getContractType(contractAddress) === type
+        },
         getShopTokens: state => (type, contractAddress) => {
             return (state.buyTokens[type]? [...state.buyTokens[type]] : []).map(token => {
                 token.contractAddress = contractAddress
@@ -228,30 +244,51 @@ export const useStore = defineStore('main', {
         },
         getSearchCollectionsAndTokens: state => {
             return state.collections
+        },
+        getTokenWithCollectionByIdentity: state => identity => {
+            const [contractAddress, tokenID] = identity.split(':')
+            const contract = state.findContractObject(contractAddress)
+            if(contract) {
+                return {
+                    token: contract.tokens.find(t => stringCompare(t.id, tokenID)),
+                    contract
+                }
+            }
+            return null
         }
     },
     actions: {
-        updateTokenImageAndAttributes(token, newAttributed = null, newImage = null){
-            const collection = this.collections.find(contract => stringCompare(contract.address, token.contractAddress))
-            const tokenInCollection = collection.tokens.find(t => stringCompare(t.id, token.id))
+        // updateTokenImageAndAttributes(token, newAttributed = null, newImage = null){
+        updateTokenImageAndAttributes(token, newAttributed = null){
+            const updateData = token => {
+                console.log('update token data', token);
+                const image = new URL(token.image)
+                image.hash = `#${Date.now()}`
 
-            const currentImage = new URL(newImage || this.preview.token.image)
-            currentImage.hash = `#${Date.now()}`
+                token.image = image.toString()
 
-            // update token in preview
-            this.preview.token.image = currentImage.toString()
-            if(newImage) this.preview.token.origin.image = newImage
-            if(newAttributed) {
-                this.preview.token.attributes = newAttributed
-                this.preview.token.origin.attributes = newAttributed
+                if(newAttributed){
+                    token.attributes = newAttributed
+                    token.origin.attributes = newAttributed
+                }
             }
 
-            // update token in gallery
-            tokenInCollection.image = currentImage.toString()
-            if(newImage) tokenInCollection.origin.image = newImage
-            if(newAttributed) {
-                tokenInCollection.attributes = newAttributed
-                tokenInCollection.origin.attributes = newAttributed
+            let tokenInStore = null
+            loop1: for (const contract of this.collections) {
+                for (const storeToken of contract.tokens) {
+                    const isFind = findTokenRecursively(storeToken, token.identity)
+                    if (isFind) {
+                        tokenInStore = isFind
+                        break loop1
+                    }
+                }
+            }
+
+            if (tokenInStore) updateData(tokenInStore)
+
+            if (this.preview.token){
+                const tokenInPreview = findTokenRecursively(this.preview.token, token.identity)
+                if (tokenInPreview) updateData(tokenInPreview)
             }
         },
         toggleTokenForBundle(token){
