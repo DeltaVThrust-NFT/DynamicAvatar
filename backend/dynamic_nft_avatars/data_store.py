@@ -67,7 +67,10 @@ class DataStore:
     def _get_file_id(self, file_id: Optional[int]) -> int:
         f_id = None
         if file_id is None:
-            f_id = max(list(map(lambda n: int(n.split('.')[0]), list(os.listdir(PATH_TO_DATA_STORE))))) + 1
+            if len(list(os.listdir(PATH_TO_DATA_STORE))) == 0:
+                f_id = 0
+            else:
+                f_id = max(list(map(lambda n: int(n.split('.')[0]), list(os.listdir(PATH_TO_DATA_STORE))))) + 1
         else:
             for f_n in os.listdir(PATH_TO_DATA_STORE):
                 if self._is_right_file(file_id, f_n):
