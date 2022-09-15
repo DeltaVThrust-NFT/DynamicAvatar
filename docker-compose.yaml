@@ -63,8 +63,8 @@ services:
 #    build: ./frontend
 #    restart: always
 #    environment:
-#      - VIRTUAL_HOST=ethcc.donft.io
-#      - LETSENCRYPT_HOST=ethcc.donft.io
+#      - VIRTUAL_HOST=da.donft.io
+#      - LETSENCRYPT_HOST=da.donft.io
 #      - VUE_APP_API_ENDPOINT=https://gen.donft.io/api
 #      - VUE_APP_API_TIMEOUT=200
 #      - VUE_APP_MOBILE_SKETCH=900
