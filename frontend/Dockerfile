@@ -3,12 +3,10 @@ FROM node:lts-alpine as build-stage
 #FROM node:17.1.0 as build-stage
 WORKDIR /app
 COPY package*.json ./
-COPY yarn.lock ./
 
-
-RUN yarn install
+RUN npm install
 COPY . .
-RUN yarn build
+RUN npm run build
 
 # production stage
 FROM nginx:stable-alpine as production-stage
