@@ -81,6 +81,7 @@ export default {
                     const response = await HTTP.get(fetchURL, {headers: {'accept': 'application/json'}})
                     if(response.headers['content-type'].indexOf('application/json') !== -1 && response.data) {
                         meta = response.data
+                        meta.uri = fetchURL
                     }
                 }
 
