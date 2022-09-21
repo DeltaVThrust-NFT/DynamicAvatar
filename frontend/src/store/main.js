@@ -260,36 +260,38 @@ export const useStore = defineStore('main', {
     actions: {
         // updateTokenImageAndAttributes(token, newAttributed = null, newImage = null){
         updateTokenImageAndAttributes(token, newAttributed = null){
-            const updateData = token => {
-                console.log('update token data', token);
-                const image = new URL(token.image)
-                image.hash = `#${Date.now()}`
+            setTimeout(() => {
+                const updateData = token => {
+                    console.log('update token data', token);
+                    const image = new URL(token.image)
+                    image.hash = `#${Date.now()}`
 
-                token.image = image.toString()
+                    token.image = image.toString()
 
-                if(newAttributed){
-                    token.attributes = newAttributed
-                    token.origin.attributes = newAttributed
-                }
-            }
-
-            let tokenInStore = null
-            loop1: for (const contract of this.collections) {
-                for (const storeToken of contract.tokens) {
-                    const isFind = findTokenRecursively(storeToken, token.identity)
-                    if (isFind) {
-                        tokenInStore = isFind
-                        break loop1
+                    if(newAttributed){
+                        token.attributes = newAttributed
+                        token.origin.attributes = newAttributed
                     }
                 }
-            }
 
-            if (tokenInStore) updateData(tokenInStore)
+                let tokenInStore = null
+                loop1: for (const contract of this.collections) {
+                    for (const storeToken of contract.tokens) {
+                        const isFind = findTokenRecursively(storeToken, token.identity)
+                        if (isFind) {
+                            tokenInStore = isFind
+                            break loop1
+                        }
+                    }
+                }
 
-            if (this.preview.token){
-                const tokenInPreview = findTokenRecursively(this.preview.token, token.identity)
-                if (tokenInPreview) updateData(tokenInPreview)
-            }
+                if (tokenInStore) updateData(tokenInStore)
+
+                if (this.preview.token){
+                    const tokenInPreview = findTokenRecursively(this.preview.token, token.identity)
+                    if (tokenInPreview) updateData(tokenInPreview)
+                }
+            }, 300)
         },
         toggleTokenForBundle(token){
             if(this.selectedForBundle.identities.includes(token.identity)) this.selectedForBundle.identities = this.selectedForBundle.identities.filter(t => !stringCompare(t, token.identity))
