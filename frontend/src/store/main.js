@@ -264,7 +264,9 @@ export const useStore = defineStore('main', {
                 const updateData = token => {
                     console.log('update token data', token);
                     const image = new URL(token.image)
-                    image.hash = `#${Date.now()}`
+                    const newHash = `${Date.now()}${Math.random()}`
+                    image.searchParams.set('hash', newHash)
+                    image.hash = `#${newHash}`
 
                     token.image = image.toString()
 
