@@ -90,9 +90,9 @@ class SmartContract {
             arrayOfTokens = await Promise.all(arrayOfTokens.map(id => Contract.tokenURI(id)))
             log('[SmartContract] token URI`s', arrayOfTokens);
 
-            const arrayOfTokensURI = arrayOfTokens;
+            // const arrayOfTokensURI = arrayOfTokens;
 
-            arrayOfTokens = await Promise.all(arrayOfTokens.map(uri => DecentralizedStorage.readData(uri)))
+            arrayOfTokens = (await Promise.allSettled(arrayOfTokens.map(uri => DecentralizedStorage.readData(uri)))).filter(f => f.status === 'fulfilled' && f.value).map(f => f.value)
             log('[SmartContract] plain tokens meta data', arrayOfTokens);
 
             //  approach each token object to app format
@@ -101,7 +101,7 @@ class SmartContract {
                     id: arrayOfTokensIds[index],
                     contractAddress: this._address,
                     address: arrayOfTokensIds[index],
-                    uri: arrayOfTokensURI[index],
+                    // uri: arrayOfTokensURI[index],
                     origin: tokenObject,
                     ...tokenObject
                 })
