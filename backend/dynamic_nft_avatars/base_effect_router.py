@@ -63,7 +63,7 @@ async def fetch_content(content_url: str, timeout: float = 20) -> bytes:
             async with ClientSession(timeout=ClientTimeout(timeout)) as session:
                 resp = await session.get(content_url)
                 return await resp.read()
-        elif 'https://gendev.donft.io/api/effects/storage' in content_url:
+        elif 'https://daback.donft.io/api/effects/storage' in content_url:
             ds = DataStore(PATH_TO_DATA_STORE)
             data = await ds.get_data(content_url.split('/')[-1])
             return data[0]
