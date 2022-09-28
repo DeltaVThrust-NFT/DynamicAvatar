@@ -8,11 +8,12 @@ from aiohttp import ClientTimeout
 from fastapi import HTTPException
 from fastapi import responses
 
-from dynamic_nft_avatars.data_store import DataStore
 from dynamic_nft_avatars.dynamic_nft_avatar_effect_service import DynamicNFTAvatarEffectService
 from ipfs.service import IPFSServiceException
 from ipfs.service import get_ipfs_service
 from settings import IPFS_SERVICE
+from settings import PATH_TO_DATA_STORE
+from storage.data_store import DataStore
 
 ipfs_service = get_ipfs_service(200, IPFS_SERVICE)
 service = DynamicNFTAvatarEffectService()
@@ -63,7 +64,7 @@ async def fetch_content(content_url: str, timeout: float = 20) -> bytes:
                 resp = await session.get(content_url)
                 return await resp.read()
         elif 'https://gendev.donft.io/api/effects/storage' in content_url:
-            ds = DataStore()
+            ds = DataStore(PATH_TO_DATA_STORE)
             data = await ds.get_data(content_url.split('/')[-1])
             return data[0]
         else:

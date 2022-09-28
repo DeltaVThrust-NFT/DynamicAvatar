@@ -1,3 +1,6 @@
 [submodule "ipfs-kit"]
 	path = ipfs-kit
 	url = https://github.com/DoNFT/ipfs-kit.git
+[submodule "storage-kit"]
+	path = storage-kit
+	url = https://github.com/DoNFT/storage-kit.git

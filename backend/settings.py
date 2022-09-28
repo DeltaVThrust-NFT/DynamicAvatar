@@ -64,3 +64,6 @@ ETH_NODE = env.str("ETH_NODE")
 if SERVICE_EFFECT == ServiceEffect.FACE_ANIMATION:
     STYLE_ID = env.int("STYLE_ID")
     STYLE_MODE = env.str("STYLE_MODE")
+
+if SERVICE_EFFECT == ServiceEffect.CIRCUS or SERVICE_EFFECT == ServiceEffect.DYNAMIC_NFT_AVATAR:
+    PATH_TO_DATA_STORE = env.str("PATH_TO_DATA_STORE")

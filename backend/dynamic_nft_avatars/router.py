@@ -18,11 +18,12 @@ from pydantic import BaseModel
 from dynamic_nft_avatars.base_effect_router import fetch_contents
 from dynamic_nft_avatars.base_effect_router import generate_content
 from dynamic_nft_avatars.base_effect_router import response_content
-from dynamic_nft_avatars.data_store import DataStore
-from dynamic_nft_avatars.data_store import DataStoreException
+from settings import PATH_TO_DATA_STORE
+from storage.data_store import DataStore
+from storage.data_store import DataStoreException
 
 router = APIRouter(prefix="/effects")
-ds = DataStore()
+ds = DataStore(PATH_TO_DATA_STORE)
 
 
 class DynamicAvatarPayload(BaseModel):
