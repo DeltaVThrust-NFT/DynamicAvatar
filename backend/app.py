@@ -6,7 +6,7 @@ from dynamic_nft_avatars.router import router as effect_router
 
 router = APIRouter(prefix="/api")
 router.include_router(effect_router)
-app = FastAPI()
+app = FastAPI(title="DynamicAvatar")
 
 app.add_middleware(
     CORSMiddleware,
