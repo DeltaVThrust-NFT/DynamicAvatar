@@ -11,7 +11,7 @@ export function useWalletConnection(){
         wallets
     } = storeToRefs(store);
 
-    const network = ref('ether')
+    const network = ref(null)
     const wallet = ref(null)
 
     const networkAssets = '/img/connect/'

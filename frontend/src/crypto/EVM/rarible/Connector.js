@@ -9,6 +9,7 @@ import router from "@/router";
 import {Etherium} from "@/crypto/helpers";
 import {Networks, ConnectionStore, ErrorList} from '@/crypto/helpers'
 import {AppStorage} from '@/crypto/helpers'
+import alert from "@/utils/alert";
 
 export default {
     controllerClass: null,
@@ -16,6 +17,7 @@ export default {
     // connector instance from Rarible
     _RaribleConnector: null,
     _connectingOptions: [],
+    _connectToNetworkId: null,
 
     // to disconnect when user connect to unsupported network
     _disconnectMethod: null,
@@ -119,10 +121,32 @@ export default {
                     return
                 }
 
+                let provider = connection.wallet.ethereum.config.web3.currentProvider
+                if(!('request' in provider)) provider = connection.wallet.ethereum.config.web3.givenProvider
+
+                try{
+                    const isSwitched = await this.switchNetwork(provider, this._connectToNetworkId)
+                    // return because after network switched lib fired new connection event
+                    if(isSwitched) {
+                        window.location.reload()
+                        return
+                    }
+                }
+                catch (e) {
+                    console.log('try to switch error', e);
+                    const viewErrors = [ErrorList.NETWORK_IN_NOT_INSTALLED, ErrorList.CHANGE_NETWORK_REJECTED, ErrorList.SWITCH_NETWORK_ERROR]
+                    const errorType = viewErrors.includes(e.message)? e.message : 'Error to connecting'
+                    alert.open(errorType)
+                    this.getConnectedCallbackFunction().forEach(promise => promise.reject())
+                    this.clearConnectedCallbackFunctions()
+                    if(this._disconnectMethod) this._disconnectMethod()
+                    return
+                }
+
                 this._connectedOptions.blockchain = connection.blockchain
                 this._connectedOptions.chainId = await connection.wallet.ethereum.getChainId()
                 this._connectedOptions.address = connection.address
-                this._connectedOptions.provider = connection.wallet.ethereum.config.web3.currentProvider
+                this._connectedOptions.provider = provider
                 this._connectedOptions.wallet = connection.wallet
 
                 const updateUserTokensAction = () => {
@@ -130,7 +154,6 @@ export default {
                 }
 
                 let connectedNetworkName = Networks.getNameByChainID(this._connectedOptions.chainId)
-                const provider = Etherium.getProvider(this._connectedOptions.provider)
 
                 if(connectedNetworkName !== 'unknown'){
                     const needToUpdateUserTokens = !!ConnectionStore.getProvider()
@@ -142,7 +165,7 @@ export default {
                         },
                         userIdentity: this._connectedOptions.address,
                         disconnectMethod: this._disconnectMethod,
-                        provider,
+                        provider: Etherium.getProvider(this._connectedOptions.provider),
                         providerType: 'Web3Provider',
                         blockchain: this._connectedOptions.blockchain,
                         wallet: this._connectedOptions.wallet
@@ -187,7 +210,52 @@ export default {
         return await this.makeConnectedCallbackFunction()
     },
 
-    async connectToWallet(walletName){
+    clearConnectedSettings(){
+        this._connectToNetworkId = null
+    },
+
+    async switchNetwork(provider, chainId = null){
+        // chainId is null when user already connected, and reload page
+        if(!chainId) return;
+
+        const chainHEX = `0x${chainId.toString(16)}`
+
+        // if chain is the same dont return true (because we didn`t switch network)
+        if(Number(provider.chainId) === chainId) {
+            this.clearConnectedSettings()
+            return
+        }
+
+        try {
+            await provider.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: chainHEX }],
+            });
+
+            this.clearConnectedSettings()
+            return true
+        }
+        catch (error) {
+            console.log('Switch error', error);
+            // @todo mobile metamask return error with no reason, so skip this error
+            if(provider.walletMeta.name === 'MetaMask'){
+                if(error.message === 'JSON RPC response format is invalid'){
+                    this.clearConnectedSettings()
+                    return true
+                }
+                else if(error.message.includes('Unrecognized chain ID')){
+                    throw Error(ErrorList.NETWORK_IN_NOT_INSTALLED)
+                }
+            }
+            else{
+                if(error.code === 4902) throw Error(ErrorList.NETWORK_IN_NOT_INSTALLED)
+                else if(error.code === 4001) throw Error(ErrorList.CHANGE_NETWORK_REJECTED)
+                throw Error(ErrorList.SWITCH_NETWORK_ERROR)
+            }
+        }
+    },
+
+    async connectToWallet(walletName, networkID){
         if(!this._RaribleConnector) throw new Error(ErrorList.CONNECTOR_NOT_INIT)
 
         if(this.getStatus() === ConnectionSteps.connected) return this.getStatus()
@@ -195,6 +263,7 @@ export default {
         const provider = this._connectingOptions.find(option => option.option === walletName)
         if(!provider) throw new Error(ErrorList.PROVIDER_NOT_FOUND)
 
+        this._connectToNetworkId = networkID
         await this._RaribleConnector.connect(provider)
         return await this.makeConnectedCallbackFunction()
     },

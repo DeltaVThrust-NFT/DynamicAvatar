@@ -13,7 +13,6 @@ import {stringCompare} from "@/utils/string";
 import alert from "@/utils/alert";
 import {ethers} from "ethers";
 import {log} from "@/utils/AppLogger";
-import {Traits} from "@/crypto/helpers/Token";
 
 class EVM {
 
@@ -26,8 +25,8 @@ class EVM {
     async init(){
         return await this.connector.init(this)
     }
-    async connectToWallet(value){
-        return await this.connector.connectToWallet(value)
+    async connectToWallet(...data){
+        return await this.connector.connectToWallet(...data)
     }
     async disconnect(){
         return await this.connector.disconnect()
@@ -45,10 +44,8 @@ class EVM {
         const {
             bundleContract,
             effectsContract,
-            // testContract
         } = Networks.getSettings(ConnectionStore.getNetwork().name)
 
-        // const contractsList = [bundleContract, effectsContract, testContract]
         const contractsList = [bundleContract, effectsContract]
 
         const collections = await Promise.all(contractsList.map(contractAddress => this.getContractWithTokens(contractAddress)))
@@ -109,7 +106,7 @@ class EVM {
 
         const newBundleMetaData = {
             ...JSON.parse(JSON.stringify(token.origin)),
-            newAttributes
+            attributes: newAttributes
         }
 
         const bundle_URI_id = Token.getFileIdByURL(token.uri)
@@ -122,7 +119,7 @@ class EVM {
 
             const newCharacterMetaData = {
                 ...JSON.parse(JSON.stringify(character.origin)),
-                newAttributes
+                attributes: newAttributes
             }
 
             const character_URI_id = Token.getFileIdByURL(character.uri)
@@ -147,12 +144,7 @@ class EVM {
         const contractInstance = await contract._getInstance()
 
         checkContractTypes.isBundle = await contractInstance.supportsInterface(process.env.VUE_APP_BUNDLE_INTERFACE_ID)
-
-        //  check for effect
-        if(!checkContractTypes.isBundle){
-            const whiteList = await this.getWhiteList()
-            checkContractTypes.isEffect = whiteList.find(contract => stringCompare(contract.contractAddress, address))
-        }
+        checkContractTypes.isEffect = !checkContractTypes.isBundle
 
         const plainContractObject = await contract.getObjectForUser(userIdentity)
 

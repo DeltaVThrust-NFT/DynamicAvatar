@@ -81,7 +81,15 @@ router.beforeEach(async (to, from) => {
         return loginPage
       }
     }
-    else return true
+    else if(to.name === 'LoginPage') {
+      try{
+        await connector.isUserConnected()
+        ConnectionStore.getUserIdentity()
+        return {name: 'Gallery'}
+      }
+      catch (e) {}
+    }
+    return true
   }
   catch (e) {
     return loginPage

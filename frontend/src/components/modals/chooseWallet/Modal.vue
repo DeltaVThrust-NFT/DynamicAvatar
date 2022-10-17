@@ -15,9 +15,9 @@
         <div class="wallet__step-items">
           <div
             v-for="option in networks"
-            :key="option.key"
-            :class="{'selected': selectedNetwork === option.key, 'na': !option.available}"
-            @click="option.available? setNetwork(option.key) : null"
+            :key="option.id"
+            :class="{'selected': selectedNetwork === option.id, 'na': !option.available}"
+            @click="option.available? setNetwork(option.id) : null"
           >
             <div>
               <img
@@ -101,7 +101,7 @@
       isConnecting.value = true
       try{
           const selected = (selectedWallet.value === '1inch')? 'walletconnect' : selectedWallet.value
-          await (await AppConnector.init(ConnectorTypes.RARIBLE)).connect(selected)
+          await (await AppConnector.init(ConnectorTypes.RARIBLE)).connect(selected, selectedNetwork.value)
 
           const heedRedirect = route.query && route.query.redirect || '/'
           await router.push({path: heedRedirect})

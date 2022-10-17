@@ -10,7 +10,6 @@ import {
     TokensABI,
     ActionTypes, Networks
 } from '@/crypto/helpers'
-import {getData} from "@/crypto/helpers/Networks";
 
 
 class SmartContract {
@@ -146,7 +145,8 @@ class SmartContract {
     async unwrapToken(tokenID){
         const Contract = await this._getInstance()
         try{
-            const transactionResult = await Contract.unbundle(tokenID)
+            const trnParams = await this._trnBaseParams('unbundle')
+            const transactionResult = await Contract.unbundle(tokenID, trnParams)
             const result = await transactionResult.wait()
             if(result.status !== 1) throw Error()
             return result
@@ -154,6 +154,7 @@ class SmartContract {
         catch (e){
             log('unwrapToken error', e);
             if(e.code === 4001) throw Error(ErrorList.USER_REJECTED_TRANSACTION)
+            else if(e.message.includes('insufficient funds')) throw Error(ErrorList.INSUFFICIENT_FUNDS)
             throw Error(ErrorList.TRN_COMPLETE)
         }
     }
@@ -195,7 +196,8 @@ class SmartContract {
         setProcessStatus(ActionTypes.minting_bundle)
 
         try{
-            const transactionResult = await Contract.bundleWithTokenURI(tokensForBundle, bundleDataCID)
+            const trnParams = await this._trnBaseParams('bundleWithTokenURI')
+            const transactionResult = await Contract.bundleWithTokenURI(tokensForBundle, bundleDataCID, trnParams)
             return await transactionResult.wait()
         }
         catch (e){
@@ -208,9 +210,9 @@ class SmartContract {
 
     async mint(userIdentity, metaCID){
         const Contract = await this._getInstance()
-        const {gasLimit} = Networks.getData(ConnectionStore.getNetwork().name)
         try{
-            const transactionResult = await Contract.mintItem(userIdentity, metaCID, {gasLimit})
+            const trnParams = await this._trnBaseParams('mintItem(address,string)')
+            const transactionResult = await Contract['mintItem(address,string)'](userIdentity, metaCID, trnParams)
             log(transactionResult)
             return await transactionResult.wait()
         }
@@ -221,14 +223,25 @@ class SmartContract {
         }
     }
 
+    async checkPermissionToModifyBundle(tokenId) {
+        const Contract = await this._getInstance()
+        const isAllowed = await Contract.allowedToAddNFTs(tokenId)
+        if(!isAllowed) throw Error(ErrorList.HAVE_NOT_PERMISSION)
+        return true
+    }
+
     async addToBundle(addToTokenID, tokenList){
         const tokenURI = await this.getTokenURI(addToTokenID)
-        return await this.callMethod('addNFTsToBundle', addToTokenID, tokenList, tokenURI)
+        await this.checkPermissionToModifyBundle(addToTokenID)
+        const trnParams = await this._trnBaseParams('addNFTsToBundle')
+        return await this.callMethod('addNFTsToBundle', addToTokenID, tokenList, tokenURI, trnParams)
     }
 
     async removeFromBundle(fromTokenID, tokenList){
         const tokenURI = await this.getTokenURI(fromTokenID)
-        return await this.callMethod('removeNFTsFromBundle', fromTokenID, tokenList, tokenURI)
+        await this.checkPermissionToModifyBundle(fromTokenID)
+        const trnParams = await this._trnBaseParams('removeNFTsFromBundle')
+        return await this.callMethod('removeNFTsFromBundle', fromTokenID, tokenList, tokenURI, trnParams)
     }
 
     async getTokenURI(tokenID){
@@ -296,16 +309,66 @@ class SmartContract {
         }))
     }
 
+    async setCorrectContractType(){
+        await this._getInstance()
+        return this._type
+    }
+
     async _getInstance(){
         if(!this._instance){
+            this._instance = await new Promise( async (resolve) => {
+                let abi;
+                if(this._type === 'bundle') abi = TokensABI.bundle.ABI
+                else if(this._type === 'allowList') abi = TokensABI.whiteList.ABI
+                else abi = TokensABI.default.ABI
+                let contract = new Contract(this._address, abi, this._getProvider())
 
-            const type = String(this._type).toLowerCase()
-            const config = (type in TokensABI)? TokensABI[type] : TokensABI.default
-            const ABI = config.ABI
-
-            this._instance = new Contract(this._address, ABI, this._getProvider())
+                try{
+                    const isBundle = await contract.supportsInterface(process.env.VUE_APP_BUNDLE_INTERFACE_ID)
+                    if (isBundle && this._type !== 'bundle') {
+                        this._type = 'bundle'
+                        contract = new Contract(this._address, TokensABI.bundle.ABI, this._getProvider())
+                    }
+                    else if (!isBundle && this._type !== 'allowList') {
+                        this._type = 'common'
+                        contract = new Contract(this._address, TokensABI.default.ABI, this._getProvider())
+                    }
+                }
+                catch (e) {}
+                resolve(contract)
+            })
         }
         return this._instance
+    }
+
+    async _trnBaseParams(forMethod){
+        if (this._type !== 'bundle') return {}
+        const payMethods = {
+            'mintItem(address,string)': 'MintFeeCoeff',
+            'bundleWithTokenURI': 'CreateBundleFeeCoeff',
+            'removeNFTsFromBundle': 'RemoveFromBundleFeeCoeff',
+            'addNFTsToBundle': 'AddToBundleFeeCoeff',
+            'unbundle': 'UnbundleFeeCoeff'
+        }
+        if(Object.keys(payMethods).includes(forMethod)){
+            const Contract = await this._getInstance()
+
+            // only if contract accept
+            try{
+                if(Contract.bundleBaseFee && Contract.MintFeeCoeff){
+                    const baseFee = await Contract.bundleBaseFee()
+                    const feeCoeff = await Contract[payMethods[forMethod]]()
+                    const resultFee = +baseFee * +feeCoeff + ''
+                    return {
+                        value: resultFee
+                    }
+                }
+            }
+            catch (e) {
+                log(`Contract ${this._address} dont support bundle interface`)
+            }
+        }
+        return {}
     }
 
     _getProvider(){

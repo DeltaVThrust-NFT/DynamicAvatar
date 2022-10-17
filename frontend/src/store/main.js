@@ -15,6 +15,9 @@ function findTokenRecursively(findInToken, findIdentity) {
     return null
 }
 
+import {getAvailableNetworks} from "@/crypto/helpers/Networks";
+const availableNetworks = getAvailableNetworks()
+
 export const useStore = defineStore('main', {
     state: () => ({
         isAppReady: false,
@@ -39,9 +42,7 @@ export const useStore = defineStore('main', {
             loading: false
         },
 
-        networks: [
-            {id: 1, name: 'Ethereum', key: 'ether', color: '#627EEA', available: true}
-        ],
+        networks: availableNetworks,
         wallets: [
             {id: 1, name: 'MetaMask', key: 'Metamask', color: '#FFFFFF', available: true},
             {id: 3, name: 'WalletConnect', key: 'walletconnect', color: '#D9ECFF', available: true},

@@ -33,7 +33,7 @@ const AppConnector = {
         return this
     },
 
-    async connect(wallet){
+    async connect(wallet, network){
         try{
             await this.connector.isUserConnected()
             return true
@@ -41,7 +41,7 @@ const AppConnector = {
         catch (e){
             log(e)
             try{
-                return await this.connector.connectToWallet(wallet)
+                return await this.connector.connectToWallet(wallet, network)
             }
             catch (e) {
                 log(e)

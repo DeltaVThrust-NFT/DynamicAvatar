@@ -11,7 +11,7 @@ export default {
         ABI: ERC721.abi,
         bytecode: ERC721.bytecode
     },
-    white_list: {
+    whiteList: {
         ABI: EffectsAllowList.abi,
         bytecode: EffectsAllowList.bytecode
     },
