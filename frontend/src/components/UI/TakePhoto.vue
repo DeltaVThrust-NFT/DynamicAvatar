@@ -18,7 +18,7 @@
 
 <script setup>
 
-import {ref, onMounted, onBeforeUnmount, watch, nextTick, defineEmits} from "vue"
+import {ref, onMounted, onBeforeUnmount, watch, nextTick} from "vue"
 const emit = defineEmits(['fireError', 'setMedia'])
 const lastShot = ref(null)
 const lastBlob = ref(null)
@@ -47,7 +47,6 @@ const startRecord = async () => {
     openCamera.value = true
   }
   catch (e){
-    console.log(e)
     emit('fireError', 'MEDIA_NOT_ALLOWED')
   }
 }

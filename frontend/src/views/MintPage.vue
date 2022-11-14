@@ -140,13 +140,11 @@
             TrnView
                 .open({hash})
                 .onClose(() => {
-                    console.log('contractsNeedToUpdate', [issuedContractAddress]);
                     router.push({name: 'Gallery'})
                     AppConnector.connector.updateContractTokensList([issuedContractAddress])
                 })
         }
         catch (e) {
-            console.log('Mint', e);
             alert.open(getErrorTextByCode(e.message) || e.message, 'Error:')
         }
         finally {

@@ -10,6 +10,7 @@ import {Etherium} from "@/crypto/helpers";
 import {Networks, ConnectionStore, ErrorList} from '@/crypto/helpers'
 import {AppStorage} from '@/crypto/helpers'
 import alert from "@/utils/alert";
+import {log} from "@/utils/AppLogger";
 
 export default {
     controllerClass: null,
@@ -133,7 +134,7 @@ export default {
                     }
                 }
                 catch (e) {
-                    console.log('try to switch error', e);
+                    log('try to switch error', e);
                     const viewErrors = [ErrorList.NETWORK_IN_NOT_INSTALLED, ErrorList.CHANGE_NETWORK_REJECTED, ErrorList.SWITCH_NETWORK_ERROR]
                     const errorType = viewErrors.includes(e.message)? e.message : 'Error to connecting'
                     alert.open(errorType)
@@ -236,7 +237,7 @@ export default {
             return true
         }
         catch (error) {
-            console.log('Switch error', error);
+            log('Switch error', error);
             // @todo mobile metamask return error with no reason, so skip this error
             if(provider.walletMeta.name === 'MetaMask'){
                 if(error.message === 'JSON RPC response format is invalid'){

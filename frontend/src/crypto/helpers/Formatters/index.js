@@ -1,6 +1,4 @@
 import {CollectionType} from "@/utils/collection";
-import {ConnectionStore, Networks} from "@/crypto/helpers";
-import {stringCompare} from "@/utils/string";
 
 export function contractFormat({
    address,

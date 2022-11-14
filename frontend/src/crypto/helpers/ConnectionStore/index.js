@@ -101,11 +101,11 @@ export default {
                 await this.disconnectMethod()
             }
             catch (e) {
-                console.log('Error logout', e)
+                console.warn('Error logout', e)
             }
         }
         else {
-            console.log('logOut method not detected')
+            console.warn('logOut method not detected')
         }
     }
 }

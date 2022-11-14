@@ -1,5 +1,4 @@
-import AppAPI, {HTTP} from "@/utils/API";
-import ConnectionStore from "@/crypto/helpers/ConnectionStore";
+import {HTTP} from "@/utils/API";
 
 export const Roles = {
     NoRole: 0,
@@ -52,17 +51,6 @@ export async function applyAssets(serverURL, original_url, modificator_urls = []
     const sendBody = {
         original_url,
         modificator_urls
-        // original: {
-        //     contract: original.contractAddress,
-        //     tokenId: original.id,
-        //     contentUrl: original.image
-        // },
-        // modificator: {
-        //     contract: modifier.contractAddress,
-        //     tokenId: modifier.id,
-        //     contentUrl: modifier.image
-        // },
-        // sender: ConnectionStore.getUserIdentity()
     }
 
     const {data: blobImage} = await HTTP.post(
@@ -91,14 +79,6 @@ export function transformIdentityToObject(identity){
 
 export function transformIdentitiesToObjects(identitiesList){
     return identitiesList.map(transformIdentityToObject)
-}
-
-export function computeModifyObject(token){
-    return {
-        contractAddress: token.contractAddress,
-        tokenID: token.id,
-        contentUrl: token.image,
-    }
 }
 
 export function addRole(tokenList, {original = [], modifier = []} = {}){

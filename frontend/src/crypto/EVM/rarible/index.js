@@ -22,7 +22,6 @@ class Rarible extends Evm{
         const haveInnerTokens = await this.getWrappedTokensObjectList(character.token.contractAddress, character.token.id)
 
         if(haveInnerTokens.length){
-            console.log('change to add to bundle')
             return await this.addTokensToBundle(character.token, tokens.map(t => t.token).filter(t => !stringCompare(t.identity, character.token.identity)))
         }
 

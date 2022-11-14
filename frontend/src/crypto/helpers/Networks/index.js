@@ -1,24 +1,3 @@
-// const networks = {
-//     maticmum: {
-//         name: "maticmum",
-//         chainId: 80001,
-//         transactionExplorer: "https://mumbai.polygonscan.com/tx/",
-//         accountExplorer: "https://mumbai.polygonscan.com/address/",
-//         marketplaceExplorer: (contractAddress, tokenID) => `https://testnets.opensea.io/assets/mumbai/${contractAddress}/${tokenID}`,
-//         gasLimit: 400000
-//     }
-// }
-//
-// const settings = {
-//     maticmum: {
-//         store: 'https://testnets.opensea.io',
-//         bundleContract: '0x4f660dC8Ec8B9092A2B892655325Fdf69042EEaC',
-//         effectsContract: '0x10223Fb767F93e7102308D753dCa71F0A432b290',
-//         whiteListContract: '0x00',
-//         testContract: '0x9b7f8bdb86696300b734944cefa35b42c5eb3aa1',
-//     }
-// }
-
 const networks = {
     sepolia: {
         meta: {

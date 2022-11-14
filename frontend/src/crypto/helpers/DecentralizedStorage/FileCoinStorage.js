@@ -22,9 +22,7 @@ const FileCoinStorage = {
 
         if(!key) ({value: key} = await this.keyGen())
 
-        const ipns = await this.publish(ipfs, key)
-
-        return ipns
+        return await this.publish(ipfs, key)
     },
     async publish(ipfsHash, ipnsKey) {
         let ipnsHash = null
@@ -32,7 +30,6 @@ const FileCoinStorage = {
         while (i < +process.env.VUE_APP_IPNS_ATTEMPTS || 10) {
             try {
                 const response = await IpnsAPI.post('/publish', `hash=${ipfsHash}&key_name=${ipnsKey}`)
-                console.log(response);
                 if(Array.isArray(response.data) && response.data.length === 2 && response.data[0] && response.data[1]) {
                     ipnsHash = response.data[0]
                     break;
@@ -69,7 +66,6 @@ const FileCoinStorage = {
             return await this.save(data)
         }
         catch (e){
-            console.log('Error while loadingJSON to back', e)
             throw Error(ErrorList.LOAD_MEDIA_ERROR)
         }
     },
@@ -78,7 +74,6 @@ const FileCoinStorage = {
             return await this.save(file)
         }
         catch (e){
-            console.log('Error while loadingJSON to back', e)
             throw Error(ErrorList.LOAD_MEDIA_ERROR)
         }
     },
@@ -87,7 +82,6 @@ const FileCoinStorage = {
             return await this.save(newData, key)
         }
         catch (e){
-            console.log('Error while loadingJSON to back', e)
             throw Error(ErrorList.LOAD_MEDIA_ERROR)
         }
     },

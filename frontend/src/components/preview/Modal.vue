@@ -194,7 +194,6 @@
                   TrnView
                       .open({hash})
                       .onClose(async () => {
-                          console.log('update', contractsNeedToUpdate)
                           await AppConnector.connector.updateContractTokensList(contractsNeedToUpdate)
                           await AppConnector.connector.getWrappedTokensObjectList(preview.value.token.contractAddress, preview.value.token.id)
                       })

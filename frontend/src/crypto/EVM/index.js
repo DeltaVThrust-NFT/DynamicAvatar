@@ -227,7 +227,7 @@ class EVM {
             await Promise.all(list.map(address => this.updateContractTokens(address)))
         }
         catch (e) {
-            console.log('updateContractTokensList', e);
+            log('updateContractTokensList', e);
         }
     }
 
@@ -239,7 +239,7 @@ class EVM {
             storage.updateContractTokens(contractAddress, tokens)
         }
         catch (e) {
-            console.log('updateContractTokens', e);
+            log('updateContractTokens', e);
         }
         finally {
             storage.changeContractUpdating(contractAddress, false)

@@ -110,7 +110,6 @@ class SmartContract {
             this.metaData.tokens = arrayOfTokens
         }
         catch (e) {
-            console.log(`fetchTokensForUser ${this._address} error`, e)
             log('[SmartContract] Error in fetchTokensForUser', e, Contract);
         }
 
@@ -201,7 +200,6 @@ class SmartContract {
             return await transactionResult.wait()
         }
         catch (e){
-            console.log(e);
             log('mint error', e);
             if(e.code === 4001) throw Error(ErrorList.USER_REJECTED_TRANSACTION)
             throw Error(ErrorList.TRN_COMPLETE)
@@ -213,11 +211,10 @@ class SmartContract {
         try{
             const trnParams = await this._trnBaseParams('mintItem(address,string)')
             const transactionResult = await Contract['mintItem(address,string)'](userIdentity, metaCID, trnParams)
-            log(transactionResult)
             return await transactionResult.wait()
         }
         catch (e){
-            console.log('mint error', e);
+            log('mint error', e);
             if(e.code === 4001) throw Error(ErrorList.USER_REJECTED_TRANSACTION)
             throw Error(ErrorList.TRN_COMPLETE)
         }

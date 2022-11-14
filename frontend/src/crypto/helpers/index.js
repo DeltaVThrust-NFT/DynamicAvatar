@@ -9,7 +9,6 @@ import ConnectionStore from './ConnectionStore'
 import AppStorage from './AppStorage'
 import * as Etherium from './Etherium'
 import * as Token from './Token'
-import * as IPFS from './IPFS'
 
 export {
     ConnectorTypes,
@@ -23,6 +22,5 @@ export {
     ConnectionStore,
     AppStorage,
     Etherium,
-    Token,
-    IPFS
+    Token
 }

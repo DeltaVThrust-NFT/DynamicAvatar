@@ -90,7 +90,6 @@
                     store.saveRestoredTokensForApply(restoredTokens.shift(), restoredTokens.shift())
                 }
                 catch (e) {
-                    console.log('restoredTokens error', e)
                     return initError('Restore token objects error.')
                 }
             }
@@ -124,14 +123,12 @@
             TrnView
                 .open({hash})
                 .onClose(() => {
-                    console.log('contractsNeedToUpdate', contractsNeedToUpdate);
                     router.push({name: 'Gallery'})
                     store.cleanSavedTokensForApply()
                     AppConnector.connector.updateContractTokensList(contractsNeedToUpdate)
                 })
         }
         catch (e) {
-            console.log('Apply effect', e);
             alert.open(getErrorTextByCode(e.message) || e.message, 'Error:')
         }
         finally {
