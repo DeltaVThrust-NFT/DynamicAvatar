@@ -2,6 +2,17 @@
   <Sketch class="gallery">
     <LoaderElement class="collections" v-if="isCollectionsLoading">Loading...</LoaderElement>
     <template v-else>
+
+      <div class="token-page__field storage-select">
+        <div>Storage</div>
+        <div>
+          <select class="input" v-model="storageTypeActive">
+            <option :value="null" disabled>Choose storage</option>
+            <option v-for="option in storageTypeList" :key="option" :value="option" v-text="option"></option>
+          </select>
+        </div>
+      </div>
+
       <ContractElement
         v-for="collection in getSearchCollectionsAndTokens"
         :contract="collection"
@@ -38,6 +49,7 @@
     import alert from "@/utils/alert";
     import TrnView from "@/utils/TrnView";
     import {getErrorTextByCode} from "@/crypto/helpers";
+    import {storageTypeActive, storageTypeList} from "@/crypto/helpers/DecentralizedStorage";
 
     const store = useStore()
 
