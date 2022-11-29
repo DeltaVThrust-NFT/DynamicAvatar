@@ -3,6 +3,24 @@ import {randomBytes} from "ethers/lib/utils";
 import {ErrorList} from "@/crypto/helpers";
 
 const FileCoinStorage = {
+    async saveWithoutUpdate(file, uploadProgress = null) {
+        if(!(file instanceof File)) {
+            file = new Blob([JSON.stringify(file)], {type: 'application/json'});
+        }
+        const formData = new FormData();
+        formData.append('payload', file)
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }
+        if (typeof uploadProgress === 'function') config.onUploadProgress = uploadProgress
+        const result = await IpnsAPI.post('/upload', formData, config)
+        if(result.data && result.data.startsWith('ipfs://')) {
+            return result.data.split('://').pop()
+        }
+        throw Error('IPFS value not valid')
+    },
     async save(file, key = null) {
         if(!(file instanceof File)) {
             file = new Blob([JSON.stringify(file)], {type: 'application/json'});
@@ -20,11 +38,10 @@ const FileCoinStorage = {
         }
         else throw Error('IPFS value not valid')
 
-        if(!key) ({value: key} = await this.keyGen())
-
         return await this.publish(ipfs, key)
     },
-    async publish(ipfsHash, ipnsKey) {
+    async publish(ipfsHash, ipnsKey = null) {
+        if(!ipnsKey) ({value: ipnsKey} = await this.keyGen())
         let ipnsHash = null
         let i = 0
         while (i < +process.env.VUE_APP_IPNS_ATTEMPTS || 10) {
@@ -69,9 +86,10 @@ const FileCoinStorage = {
             throw Error(ErrorList.LOAD_MEDIA_ERROR)
         }
     },
-    async loadFile(file){
+    async loadFile(file, withPublishToIPNS = true, uploadProgress = null){
         try{
-            return await this.save(file)
+            if (withPublishToIPNS) return await this.save(file)
+            else return await this.saveWithoutUpdate(file, uploadProgress)
         }
         catch (e){
             throw Error(ErrorList.LOAD_MEDIA_ERROR)
@@ -85,6 +103,17 @@ const FileCoinStorage = {
             throw Error(ErrorList.LOAD_MEDIA_ERROR)
         }
     },
+    async getKeyList() {
+        const response = await IpnsAPI.get('/get_keys')
+        if(response.data){
+            const list = Object.entries(response.data)
+            return list.map(item => ({
+                ipnsKey: item[0],
+                ipfsKey: item[1]
+            }))
+        }
+        throw Error('Response not valid')
+    }
 }
 
 export default FileCoinStorage

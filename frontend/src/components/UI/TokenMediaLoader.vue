@@ -37,10 +37,13 @@
 <script setup>
     import {ref} from "vue";
     import {computeTokenImgStyle} from "@/utils/styles";
-    import {checkFile} from "@/utils/file";
+    import {checkFile, checkFileSize} from "@/utils/file";
     import alert from "@/utils/alert";
     import ToggleElement from '@/components/UI/Toggle'
     import TakePhoto from '@/components/UI/TakePhoto'
+
+    const props = defineProps(['mode'])
+    const emits = defineEmits(['addFile'])
 
     const isTransportSelfie = ref(false)
 
@@ -53,7 +56,7 @@
     const loadFile = () => {
         const input = document.createElement('input')
         input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/png,image/jpeg');
+        if (!props.mode) input.setAttribute('accept', 'image/png,image/jpeg');
         document.getElementById('tempInjectedElements').appendChild(input);
         input.onchange = (e) => {
             e.preventDefault()
@@ -62,9 +65,15 @@
 
             try{
                 isLoading.value = true
-                checkFile(fileForLoad)
-                file.value = fileForLoad
-                image.value = URL.createObjectURL(fileForLoad)
+                if (!props.mode) {
+                  checkFile(fileForLoad)
+                  file.value = fileForLoad
+                  image.value = URL.createObjectURL(fileForLoad)
+                }
+                else if (props.mode === 'loadOnly') {
+                  checkFileSize(fileForLoad)
+                  emits('addFile', fileForLoad)
+                }
             }
             catch (e){
                 let message = ''

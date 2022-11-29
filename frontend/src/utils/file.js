@@ -10,3 +10,9 @@ export function checkFile(file){
 
     return true
 }
+
+export function checkFileSize(file, maxSize = +process.env.VUE_APP_IPFS_MAX_SIZE) {
+    const fileSize = (file.size / 1024 / 1024).toFixed(2)
+    if (fileSize <= maxSize) return true
+    throw new Error('SIZE')
+}

@@ -5,6 +5,7 @@ import ApplyPage from '@/views/ApplyPage.vue'
 import MintPage from '@/views/MintPage.vue'
 import BundlePage from '@/views/BundlePage.vue'
 import LoginPage from '@/views/LoginPage.vue'
+import StoragePage from '@/views/StoragePage.vue'
 import AppConnector from '@/crypto/AppConnector'
 import {ConnectionStore} from '@/crypto/helpers'
 
@@ -53,6 +54,11 @@ const routes = [
     path: '/login',
     name: 'LoginPage',
     component: LoginPage
+  },
+  {
+    path: '/storage',
+    name: 'StoragePage',
+    component: StoragePage
   }
 ]
 

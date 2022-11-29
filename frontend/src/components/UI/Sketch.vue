@@ -85,7 +85,14 @@
       <slot></slot>
     </div>
     <div class="sketch__footer">
-      © 2022 doNFT, All Rights Reserved.
+      <div>
+        <div>
+          © 2022 doNFT, All Rights Reserved.
+        </div>
+        <div>
+          <router-link :to="{name: 'StoragePage'}">Storage testing</router-link>
+        </div>
+      </div>
     </div>
   </div>
 </template>
