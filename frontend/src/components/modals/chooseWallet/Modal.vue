@@ -1,8 +1,8 @@
 <template>
   <Modal
     class="wallet"
-    v-if="isOpen"
-    :options="{withoutClose: true}"
+    v-if="isOpen && walletConnectModalOpen"
+    :options="modalOptions"
     @close="close"
   >
     <template #title>Connect to wallet</template>
@@ -75,11 +75,19 @@
   import Modal from '@/components/UI/Modal'
   import LoaderElement from '@/components/UI/Loader'
   import {useWalletConnection} from "@/components/helpers/WalletConnect";
-  import {ref} from "vue";
+  import {reactive, ref, watchEffect} from "vue";
   import AppConnector from '@/crypto/AppConnector'
   import {ConnectorTypes} from '@/crypto/helpers'
   import {useRouter, useRoute} from "vue-router";
   import {log} from "@/utils/AppLogger";
+  import {useStore} from "@/store/main";
+  import {storeToRefs} from "pinia";
+
+  const store = useStore()
+  const {
+    walletConnectModalOpen
+  } = storeToRefs(store)
+
   const router = useRouter()
   const route = useRoute()
   const {
@@ -113,4 +121,12 @@
           isConnecting.value = false
       }
   }
+
+  const modalOptions = reactive({
+    withoutClose: true
+  })
+
+  watchEffect(() => {
+    modalOptions.withoutClose = router.currentRoute.value.name !== 'Login'
+  })
 </script>

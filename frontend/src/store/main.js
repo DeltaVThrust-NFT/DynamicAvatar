@@ -223,7 +223,9 @@ export const useStore = defineStore('main', {
                 token: null,
                 identity: null
             }
-        }
+        },
+
+        walletConnectModalOpen: true
     }),
     getters: {
         getFilteredCollections: state => type => state.collections.filter(collection => collection.type === type),
@@ -259,6 +261,9 @@ export const useStore = defineStore('main', {
         }
     },
     actions: {
+        onLoginPageModalChange(value){
+            this.walletConnectModalOpen = value
+        },
         // updateTokenImageAndAttributes(token, newAttributed = null, newImage = null){
         updateTokenImageAndAttributes(token, newAttributed = null){
             setTimeout(() => {

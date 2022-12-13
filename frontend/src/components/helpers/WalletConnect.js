@@ -27,7 +27,7 @@ export function useWalletConnection(){
         selectedWallet: wallet,
         networkAssets,
         close: () => {
-            // can`t close
+            store.onLoginPageModalChange(false)
         },
         setNetwork: value => {
             network.value = value

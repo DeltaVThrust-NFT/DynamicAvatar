@@ -1,0 +1,48 @@
+.lp-intro-cover{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px;
+  overflow: auto;
+}
+
+.lp-intro{
+  display: grid;
+  grid-template-columns: auto 320px;
+  gap: 50px;
+  font-size: 16px;
+  line-height: 22px;
+  max-width: 730px;
+  margin: auto;
+
+  @media screen and (max-width: 700px) {
+    display: flex;
+    flex-direction: column;
+
+    div:nth-child(1) {
+      order: 2
+    }
+    div:nth-child(2) {
+      order: 0
+    }
+  }
+
+  &__logo div{
+    width: 320px;
+    height: 320px;
+    border-radius: 22px;
+    background: url(/img/lp_lizard.svg) no-repeat right bottom rgba(255, 255, 255, 0.5);
+    background-size: 90%;
+    margin: auto;
+  }
+
+  h1 {
+    font-size: 26px;
+    line-height: 35px;
+  }
+
+  h1 + * {
+    padding: 30px 0;
+  }
+}
