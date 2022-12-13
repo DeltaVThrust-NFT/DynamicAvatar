@@ -1,15 +1,15 @@
 <template>
   <div class="token-data__visual">
     <template v-if="isAttributesAvailable">
-      <div>Age:</div>
+      <div>Sex:</div>
       <div>
-        <input type="range" :min="0" :max="Object.keys(Traits.age).length - 1" v-model="tokenAge">
-        {{ ageSelected }}
+        <input type="range" :min="0" :max="Object.keys(Traits.sex).length - 1" v-model="tokenSex">
+        {{ sexSelected }}
       </div>
-      <div>Mood:</div>
+      <div>Emoji:</div>
       <div>
-        <input type="range" :min="1" :max="Object.keys(Traits.mood).length" v-model="tokenMood">
-        {{ moodSelected }}
+        <input type="range" :min="0" :max="Object.keys(Traits.emoji).length - 1" v-model="tokenEmoji">
+        {{ emojiSelected }}
       </div>
     </template>
     <template v-for="prop in viewProps">
@@ -53,24 +53,24 @@
         return CollectionType.isBundle(contract.type)
     })
 
-    const age = props.token.attributes.find(attribute => attribute.trait_type === 'age')?.value || Traits.age.baby
-    const mood = props.token.attributes.find(attribute => attribute.trait_type === 'mood')?.value || Traits.mood.general
+    const sex = props.token.attributes.find(attribute => attribute.trait_type === 'sex')?.value || Traits.sex.male
+    const emoji = props.token.attributes.find(attribute => attribute.trait_type === 'emoji')?.value || Traits.emoji.im_perfect_anime
 
-    const tokenAge = ref(age)
-    const tokenMood = ref(mood)
+    const tokenSex = ref(sex)
+    const tokenEmoji = ref(emoji)
 
-    const ageSelected = computed(() => {
-        return Object.entries(Traits.age).find(([name, id]) => id === +tokenAge.value)[0]
+    const sexSelected = computed(() => {
+        return Object.entries(Traits.sex).find(([name, id]) => id === +tokenSex.value)[0]
     })
 
-    const moodSelected = computed(() => {
-        return Object.entries(Traits.mood).find(([name, id]) => id === +tokenMood.value)[0]
+    const emojiSelected = computed(() => {
+        return Object.entries(Traits.emoji).find(([name, id]) => id === +tokenEmoji.value)[0]
     })
 
     const haveAttributesChanges = ref(false)
 
     // let dontApplyChanges = false
-    watch([tokenAge, tokenMood], async () => {
+    watch([tokenSex, tokenEmoji], async () => {
         // if(dontApplyChanges) {
         //     dontApplyChanges = false
         //     return
@@ -87,7 +87,7 @@
     const saveNewAttributes = async () => {
         isLoading.value = true
         try{
-            await AppConnector.connector.saveNewAttributes(props.token, {age: tokenAge.value, mood: tokenMood.value})
+            await AppConnector.connector.saveNewAttributes(props.token, {sex: tokenSex.value, emoji: tokenEmoji.value})
             await nextTick(() => {
                 haveAttributesChanges.value = false
             })
@@ -102,8 +102,8 @@
 
     const cancelAttributesChange = () => {
         // dontApplyChanges = true
-        tokenAge.value = props.token.attributes.find(attribute => attribute.trait_type === 'age')?.value || Traits.age.baby
-        tokenMood.value = props.token.attributes.find(attribute => attribute.trait_type === 'mood')?.value || Traits.mood.general
+        tokenSex.value = props.token.attributes.find(attribute => attribute.trait_type === 'sex')?.value || Traits.sex.male
+        tokenEmoji.value = props.token.attributes.find(attribute => attribute.trait_type === 'emoji')?.value || Traits.emoji.im_perfect_anime
         // emits('setTempImage', null)
         nextTick(() => {
             haveAttributesChanges.value = false

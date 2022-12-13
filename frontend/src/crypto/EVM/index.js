@@ -54,11 +54,11 @@ class EVM {
         storage.setCollections(collections)
     }
 
-    async generateNewTokenImage({age, mood}, {inner = []} = {}){
+    async generateNewTokenImage({sex, emoji}, {inner = []} = {}){
         const store = AppStorage.getStore()
 
         const baseImage = new URL(window.location.href)
-        baseImage.pathname = `/img/characters/${Token.Traits.getAgeNameById(+age)}-${Token.Traits.getMoodNameById(+mood)}.png`
+        baseImage.pathname = `/img/characters/${Token.Traits.getSexNameById(+sex)}/${Token.Traits.getEmojiNameById(+emoji)}.png`
         const baseImageURL = baseImage.toString()
 
         const applyEffectImages = inner.filter(t => !store.checkContractType(t.contractAddress, CollectionType.BUNDLE)).map(t => t.origin.image)
@@ -84,8 +84,8 @@ class EVM {
         }
     }
 
-    async saveNewAttributes(token, {age, mood}){
-        const {file: bundleImageFile, baseFile} = await this.generateNewTokenImage({age, mood}, token)
+    async saveNewAttributes(token, {sex, emoji}){
+        const {file: bundleImageFile, baseFile} = await this.generateNewTokenImage({sex, emoji}, token)
 
         const store = AppStorage.getStore()
         const character = token.inner.find(t => store.checkContractType(t.contractAddress, CollectionType.BUNDLE))
@@ -95,12 +95,12 @@ class EVM {
 
         const newAttributes = [
             {
-                trait_type: 'age',
-                value: +age
+                trait_type: 'sex',
+                value: +sex
             },
             {
-                trait_type: 'mood',
-                value: +mood
+                trait_type: 'emoji',
+                value: +emoji
             }
         ]
 

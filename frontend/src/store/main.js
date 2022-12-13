@@ -95,55 +95,63 @@ export const useStore = defineStore('main', {
                 },*/
                 {
                     isForBuy: true,
-                    image: '/img/characters/baby-general.png',
-                    name: 'Baby',
-                    description: 'Baby general',
+                    image: '/img/characters/male/im_perfect_anime.png',
+                    name: 'Perfect anime',
+                    description: 'Perfect anime (male)',
                     link: null,
                     attributes: [
                         {
-                            trait_type: 'age',
-                            value: Traits.age.baby
+                            trait_type: 'sex',
+                            value: Traits.sex.male
                         },
                         {
-                            trait_type: 'mood',
-                            value: Traits.mood.general
-                        }
+                            trait_type: 'emoji',
+                            value: Traits.emoji.im_perfect_anime
+                        },
+                        // {
+                        //     trait_type: 'age',
+                        //     value: Traits.age.baby
+                        // },
+                        // {
+                        //     trait_type: 'mood',
+                        //     value: Traits.mood.general
+                        // }
                     ],
                 },
                 {
                     isForBuy: true,
-                    image: '/img/characters/child-general.png',
-                    name: 'Child',
-                    description: 'Child general',
+                    image: '/img/characters/female/im_perfect_anime.png',
+                    name: 'Perfect anime',
+                    description: 'Perfect anime (female)',
                     link: null,
                     attributes: [
                         {
-                            trait_type: 'age',
-                            value: Traits.age.child
+                            trait_type: 'sex',
+                            value: Traits.sex.female
                         },
                         {
-                            trait_type: 'mood',
-                            value: Traits.mood.general
+                            trait_type: 'emoji',
+                            value: Traits.emoji.im_perfect_anime
                         }
                     ],
                 },
-                {
-                    isForBuy: true,
-                    image: '/img/characters/teen-general.png',
-                    name: 'Teen',
-                    description: 'Teen general',
-                    link: null,
-                    attributes: [
-                        {
-                            trait_type: 'age',
-                            value: Traits.age.teen
-                        },
-                        {
-                            trait_type: 'mood',
-                            value: Traits.mood.general
-                        }
-                    ],
-                },
+                // {
+                //     isForBuy: true,
+                //     image: '/img/characters/teen-general.png',
+                //     name: 'Teen',
+                //     description: 'Teen general',
+                //     link: null,
+                //     attributes: [
+                //         {
+                //             trait_type: 'age',
+                //             value: Traits.age.teen
+                //         },
+                //         {
+                //             trait_type: 'mood',
+                //             value: Traits.mood.general
+                //         }
+                //     ],
+                // },
 
                 /*{
                     isForBuy: true,

@@ -26,11 +26,30 @@ export const Traits = {
     },
     getMoodNameById(inputId) {
         return Object.entries(this.mood).find(([, id]) => id === inputId)?.[0]
-    }
+    },
+
+    sex: {
+        male: 0,
+        female: 1,
+    },
+    emoji: {
+        im_perfect_anime: 0,
+        angel_anime: 1,
+        im_sick_anime: 2,
+        camera_anime: 3,
+        dont_understand_anime: 4,
+        evil_laugh_anime: 5
+    },
+    getSexNameById(inputId) {
+        return Object.entries(this.sex).find(([, id]) => id === inputId)?.[0]
+    },
+    getEmojiNameById(inputId) {
+        return Object.entries(this.emoji).find(([, id]) => id === inputId)?.[0]
+    },
 }
 
 export async function getTokenImageFileByName(inputName) {
-    const imageName = inputName.split('/').pop()
+    const imageName = inputName.split('/').slice(-2).join('/')
     const imageBytes = await fetch(`/img/characters/${imageName}`).then(r => r.blob())
 
     return new File([imageBytes], imageName, {
