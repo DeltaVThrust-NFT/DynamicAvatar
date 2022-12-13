@@ -92,6 +92,9 @@
         <div>
           <router-link :to="{name: 'StoragePage'}">Storage testing</router-link>
         </div>
+        <div>
+          Powered by <a href="https://mirror-ai.com/" target="_blank">mirror-ai.com</a>
+        </div>
       </div>
     </div>
   </div>

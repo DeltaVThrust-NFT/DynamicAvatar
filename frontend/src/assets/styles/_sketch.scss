@@ -5,7 +5,7 @@
   max-width: 1200px;
   margin: auto;
   grid-template-columns: 200px auto;
-  grid-template-rows: 100px 40px auto 70px;
+  grid-template-rows: 100px 40px auto 100px;
   grid-template-areas:
           "logo header"
           "nav nav"
@@ -63,8 +63,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 70px;
+    height: 100px;
     text-align: center;
+
+    & > div div + * {
+      margin-top: 5px
+    }
   }
 
   &__title{
