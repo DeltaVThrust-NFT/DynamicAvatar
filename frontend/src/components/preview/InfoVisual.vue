@@ -3,13 +3,16 @@
     <template v-if="isAttributesAvailable">
       <div>Sex:</div>
       <div>
-        <input type="range" :min="0" :max="Object.keys(Traits.sex).length - 1" v-model="tokenSex">
-        {{ sexSelected }}
+        <select v-model="tokenSex">
+          <option :value="0">Male</option>
+          <option :value="1">Female</option>
+        </select>
       </div>
       <div>Emoji:</div>
       <div>
-        <input type="range" :min="0" :max="Object.keys(Traits.emoji).length - 1" v-model="tokenEmoji">
-        {{ emojiSelected }}
+        <select v-model="tokenEmoji">
+          <option v-for="item in Object.keys(Traits.emoji).length" :value="item - 1">{{ emojiItemName(item - 1) }}</option>
+        </select>
       </div>
     </template>
     <template v-for="prop in viewProps">
@@ -61,6 +64,10 @@
 
     const sexSelected = computed(() => {
         return Object.entries(Traits.sex).find(([name, id]) => id === +tokenSex.value)[0]
+    })
+
+    const emojiItemName = computed(() => itemId => {
+      return Object.entries(Traits.emoji).find(([name, id]) => id === +itemId)[0]
     })
 
     const emojiSelected = computed(() => {
